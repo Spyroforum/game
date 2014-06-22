@@ -29,16 +29,18 @@ keyboard.isReleased = function(key){
 
 keyboard.update = function(){
     for(var n = 0; n < this.keys; n++){
-        if(this.keystate[n] == 1) this.keystate[n] = 2;
-        else if(this.keystate[n] == -1) this.keystate[n] = 0;
+        if( this.keystate[n] == 1 ) 
+			this.keystate[n] = 2;
+        else if( this.keystate[n] == -1 ) 
+			this.keystate[n] = 0;
 	}
 }
 
 
 function keyPress(e){
     for(var n = 0; n < keyboard.keys; n++){
-		if(keyboard.keycode[n] == e.keyCode){
-			 if(keyboard.keystate[n] != 2)
+		if( keyboard.keycode[n] == e.keyCode ){
+			 if( keyboard.keystate[n] != 2 )
 			 	keyboard.keystate[n] = 1;
 			break;
 		}
@@ -48,7 +50,7 @@ function keyPress(e){
 
 function keyRelease(e){
     for(var n = 0; n < keyboard.keys; n++){
-		if(keyboard.keycode[n] == e.keyCode){
+		if( keyboard.keycode[n] == e.keyCode ){
 			keyboard.keystate[n] = -1;
 			break;
 		}

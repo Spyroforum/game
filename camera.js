@@ -6,12 +6,12 @@ function Camera(){
 	this.step = function(){
 		with(this)
 		{
-		    x = target.x-screenWidth/2;
-			y = target.y-screenHeight/2;
+		    x = target.x - screenWidth / 2;
+			y = target.y - screenHeight / 2;
 		}
 	}
 	this.setView = function(context){
-		context.setTransform(1,0,0,1,0,0);
-		context.translate(-this.x,-this.y);
+		context.setTransform(1, 0, 0, 1, 0, 0);//Clear all previous transformation
+		context.translate( -this.x, -this.y);
 	}
 }
