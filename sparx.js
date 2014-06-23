@@ -40,7 +40,7 @@ function Sparx(){
     }
 
     this.moveTo = function(a, b){
-        if( this.x < a ){
+        /*if( this.x < a ){
             this.x += 8;
             if( this.x > a )
                 this.x = a;
@@ -60,6 +60,9 @@ function Sparx(){
             this.y -= 8;
             if( this.y < b )
                 this.y = b;
-        }
+        }*/
+        
+        this.x += (a - this.x) * 0.2;
+        this.y += (b - this.y) * 0.2;
     }
 }
