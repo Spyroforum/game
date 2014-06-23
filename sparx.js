@@ -31,38 +31,12 @@ function Sparx(){
 
         // move sparx closer to spyro
         if( this.spyro != null ){
-            this.moveTo( this.spyro.x + this.rdx, this.spyro.y + this.rdy );
+            this.x += (this.spyro.x + this.rdx - this.x) * 0.2;
+            this.y += (this.spyro.y + this.rdy - this.y) * 0.2;
         }
     }
 
     this.draw = function(){
         drawSprite(context, this.sprite, this.frame, this.x, this.y, -this.spyro.facing, 1, 0 );
-    }
-
-    this.moveTo = function(a, b){
-        /*if( this.x < a ){
-            this.x += 8;
-            if( this.x > a )
-                this.x = a;
-        }
-        else if( this.x > a ){
-            this.x -= 8;
-            if( this.x < a )
-                this.x = a;
-        }
-
-        if( this.y < b ){
-            this.y += 8;
-            if( this.y > b )
-                this.y = b;
-        }
-        else if( this.y > b ){
-            this.y -= 8;
-            if( this.y < b )
-                this.y = b;
-        }*/
-        
-        this.x += (a - this.x) * 0.2;
-        this.y += (b - this.y) * 0.2;
     }
 }
