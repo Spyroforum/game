@@ -35,6 +35,6 @@ function Enemy(){
 	}
 	
 	this.draw = function(){
-		drawSprite(ctx, this.sprite, 0, this.x, this.y, 1, 1, 0 );
+        drawSprite(context, this.sprite, 0, this.x, this.y, 1, 1, 0 );
 	}
 }

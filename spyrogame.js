@@ -1,6 +1,6 @@
 //Variables:
 //General:
-var canvas = document.getElementById("gamecanvas"), ctx = canvas.getContext("2d");
+var canvas = document.getElementById("gamecanvas"), context = canvas.getContext("2d");
 var gameLoop, screenWidth, screenHeight;
 
 //Keyboard keys
@@ -10,14 +10,17 @@ var leftKey, upKey, rightKey, downKey, aKey, sKey;
 //Objects
 var objSpyro = null;
 var objEnemy = null;
-var objCamera = null;//NEW(sheep)
-var objLevel = null;//NEW(sheep)
+var objSparx = null;
+var objCamera = null;
+var objLevel = null;
+var objTerrain = null;
 var gravity = 1.5;
 
 //Sprites
 var sprSpyro = resources.addSprite("graphics/spyro.png", 2, 64, 64, 32, 32, 0);
 var sprSpyroHurt = resources.addSprite("graphics/spyroHurt.png", 2, 64, 64, 32, 32, 0);
 var sprEnemy = resources.addSprite("graphics/enemy.png", 1, 64, 64, 32, 32, 0);
+var sprSparx = resources.addSprite("graphics/sparx.png", 6, 32, 32, 16, 16, 0);
 //Sounds
 var sndRumble = resources.addSound("sounds/rumble.ogg");
 var sndJump = resources.addSound("sounds/jump.ogg");
@@ -43,7 +46,7 @@ function gameInit(){
 	sKey = keyboard.addKey(ord("S"));
 	
 	//Create block/grid terrain
-	//NEW(sheep)test grid level structure, just for demonstration
+    //test grid level structure, just for demonstration
 	objTerrain = new GridTerrain(64, 20, 11);
 	objTerrain.grid = [
 		[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
@@ -59,14 +62,16 @@ function gameInit(){
 		[0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1]
 	]
 	//NEW(sheep)Create camera
-	objCamera = new Camera();//NEW(sheep)
+    objCamera = new Camera();
 	
 	//Create Spyro
 	objSpyro = new Spyro();
-	objSpyro.terrain = objTerrain;//NEW(sheep)
-	objCamera.target = objSpyro;//NEW(sheep)
+    objSpyro.terrain = objTerrain;
+    objCamera.target = objSpyro;
     objEnemy = new Enemy();
     objEnemy.spyro = objSpyro;
+    objSparx = new Sparx();
+    objSparx.spyro = objSpyro;
 	
 	//Start the game loop
 	gameLoop = this.setInterval("gameStep()", 1000 / 30);
@@ -75,18 +80,20 @@ function gameInit(){
 function gameStep(){
 	if( resources.loaded ){
 		//Clear the canvas with a pink background colour
-		ctx.setTransform(1, 0, 0, 1, 0, 0);
-		ctx.fillStyle = 'rgb(255, 150, 255)';
-		ctx.fillRect(0, 0, screenWidth, screenHeight);
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        context.fillStyle = 'rgb(255, 150, 255)';
+        context.fillRect(0, 0, screenWidth, screenHeight);
 		
 		//Make Spyro do stuff
 		objSpyro.step();
 		objEnemy.step();
+        objSparx.step();
 		objCamera.step();
-		objCamera.setView(ctx);
-		objTerrain.draw(0, 0);//NEW(sheep)
+        objCamera.setView(context);
+        objTerrain.draw(0, 0);
 		objSpyro.draw();
 		objEnemy.draw();
+        objSparx.draw();
 		
 		keyboard.update();//Make keys go to the state of just being held or untouched after being pressed or released
 		mouse.update();

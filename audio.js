@@ -111,16 +111,15 @@ var audio = {
 	playedSounds: new Array()
 }
 
+/*
+    sound - the sound to play. Like 'sndGem'
+    volume - the volume of the sound, from 0 to 1
+    looping - boolean, whether the sound should be looping or not.
+
+    returns - a sound object containing the HTML5 audio element, it's destruction timer, and it's index in the list of currently played sounds
+        Store it in a variable if you later want to pause the sound, change it's volume, pause or unpause it, or end it while it's still playing
+*/
 audio.playSound = function(sound, volume, loop){
-	/*
-		sound - the sound to play. Like 'sndGem'
-		volume - the volume of the sound, from 0 to 1
-		looping - boolean, whether the sound should be looping or not.
-		
-		returns - a sound object containing the HTML5 audio element, it's destruction timer, and it's index in the list of currently played sounds
-			Store it in a variable if you later want to pause the sound, change it's volume, pause or unpause it, or end it while it's still playing
-	*/
-	
 	//Duplicate the audio element of the sound and make it play
 	var copy = document.body.appendChild( sound.element.cloneNode() );
 	copy.autoplay = true;
@@ -159,6 +158,7 @@ audio.playSound = function(sound, volume, loop){
 	var soundObject = new SoundObject(copy, t, index);
 	return soundObject;
 }
+
 audio.destroySound = function(index){
 	var element = document.getElementById( audio.playedSounds[index] );
 	element.pause();

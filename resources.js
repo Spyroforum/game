@@ -22,34 +22,34 @@ resources.loadStep = function(){
 	}
 	
 	//Draw loading bar on black background
-	ctx.setTransform(1, 0, 0, 1, 0, 0);
-	ctx.fillStyle = 'rgb(0, 0, 0)';//Black
-	ctx.fillRect(0, 0, screenWidth, screenHeight);
-	ctx.fillStyle = 'rgb(127, 127, 127)';//Gray unfilled area
-	ctx.fillRect(0, screenHeight / 2 - 32, screenWidth, 64);
-	ctx.fillStyle = 'rgb(255, 255, 255)';//White filled area
-	ctx.fillRect(0, screenHeight / 2 - 32, screenWidth * currentlyLoaded / this.numResources, 64);
+    context.setTransform(1, 0, 0, 1, 0, 0);
+    context.fillStyle = 'rgb(0, 0, 0)';//Black
+    context.fillRect(0, 0, screenWidth, screenHeight);
+    context.fillStyle = 'rgb(127, 127, 127)';//Gray unfilled area
+    context.fillRect(0, screenHeight / 2 - 32, screenWidth, 64);
+    context.fillStyle = 'rgb(255, 255, 255)';//White filled area
+    context.fillRect(0, screenHeight / 2 - 32, screenWidth * currentlyLoaded / this.numResources, 64);
 	
 	if(currentlyLoaded == this.numResources)
 		this.loaded = true;
 }
 	
+/*
+**	Loads a sprite from a sprite strip image
+**
+**	Parameters:
+**		<source> - the image url to load from
+**		<frames> - the number of frames in the animation
+**		<width> - the width of a single sprite frame of the strip
+**		<height> - the height of the sprite
+**		<originx> - the x origin of the sprite
+**		<originy> - the y origin of the sprite
+**		<sep> - the number of pixels separating each frame of the sprite strip
+**
+**	Returns:
+**		the sprite
+*/
 resources.addSprite = function(source,frames,width,height,originx,originy,sep){
-	/*
-	**	Loads a sprite from a sprite strip image
-	**
-	**	Parameters:
-	**		<source> - the image url to load from
-	**		<frames> - the number of frames in the animation
-	**		<width> - the width of a single sprite frame of the strip
-	**		<height> - the height of the sprite
-	**		<originx> - the x origin of the sprite
-	**		<originy> - the y origin of the sprite
-	**		<sep> - the number of pixels separating each frame of the sprite strip
-	**
-	**	Returns:
-	**		the sprite
-	*/
 	var sprite = {
 		img: new Image(),
 		frames: frames,

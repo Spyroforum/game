@@ -6,11 +6,11 @@ function GridTerrain(blockSize, xSize, ySize){
 
 	this.draw = function(x, y){
 		if( this.grid != null ){
-			ctx.fillStyle = 'rgb(50, 200, 100)';
+            context.fillStyle = 'rgb(50, 200, 100)';
 			for(var xx = 0; xx < this.xSize; xx++){
 				for(var yy = 0; yy < this.ySize; yy++){
 					if( this.grid[yy][xx] == 1 )
-						ctx.fillRect(x + xx * this.blockSize, y + yy * this.blockSize, this.blockSize, this.blockSize);
+                        context.fillRect(x + xx * this.blockSize, y + yy * this.blockSize, this.blockSize, this.blockSize);
 				}
 			}
 		}
