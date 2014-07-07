@@ -2,8 +2,10 @@
 var resources = {
 	loaded: false,
 	numResources: 0,
-    sprites: new Array(),
-	sounds: new Array(),
+    sprites: [],
+	sounds: [],
+	textures: [],
+	details: []
 }
 
 resources.loadStep = function(){
@@ -15,9 +17,21 @@ resources.loadStep = function(){
 			currentlyLoaded++;
 	}
 	
-	var l = this.sounds.length;
+	l = this.sounds.length;
 	for(var i = 0; i<l; i++){
 		if( this.sounds[i].element.readyState >=1 )
+			currentlyLoaded++;
+	}
+	
+	l = this.textures.length;
+	for(var i = 0; i<l; i++){
+		if( this.textures[i].img.naturalWidth != 0 )
+			currentlyLoaded++;
+	}
+	
+	l = this.details.length;
+	for(var i = 0; i<l; i++){
+		if( this.details[i].img.naturalWidth != 0 )
 			currentlyLoaded++;
 	}
 	
@@ -85,4 +99,59 @@ resources.addSound = function(source){
 	resources.numResources++;
 	
 	return sound;
+}
+
+resources.addTexture = function(source){
+	var texture = {
+		img: new Image()
+	};
+	texture.img.src = source;
+	
+	resources.textures.push(texture);
+	resources.numResources++;
+
+	return texture;
+}
+
+resources.addDetail = function(source,originx,originy){
+	var detail = {
+		img: new Image(),
+		originX: originx,
+		originY: originy
+	};
+	detail.img.src = source;
+	
+	resources.details.push(detail);
+	resources.numResources++;
+
+	return detail;
+}
+
+resources.getFromString = function(str){
+	var type = str.substring(0,3);
+	var list = null;
+	if( type == "snd"){
+		list = this.sounds;
+		var l = list.length;
+		for( var n = 0; n < l; n++){
+			if( list[n].element.src.indexOf(str,0) != -1 )
+				return list[n];
+		}
+	} else {
+		if( type == "spr")
+			list = this.sprites;
+		else if( type == "tex")
+			list = this.textures;
+		else if( type == "dtl")
+			list = this.details;
+			
+		if( list != null ){
+			var l = list.length;
+			for( var n = 0; n < l; n++){
+				if( list[n].img.src.indexOf(str,0) != -1 )
+					return list[n];
+			}
+		}
+	}
+	return null;
 }

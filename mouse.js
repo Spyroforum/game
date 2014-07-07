@@ -23,8 +23,8 @@ function mouseUp(e){
 
 
 function mouseMove(e){
-    mouse.px = mouse.x;
-    mouse.py = mouse.y;
+    //mouse.px = mouse.x;
+    //mouse.py = mouse.y;
     getMousePosition(e);
 }
 
@@ -75,7 +75,8 @@ mouse.update = function(){
         if( this.state[i] == 1 ) this.state[i] = 2;
         else if( this.state[i] == -1 ) this.state[i] = 0;
     }
-
+	mouse.px = mouse.x;
+    mouse.py = mouse.y;
     this.wdelta = 0;
 }
 

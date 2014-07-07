@@ -2,8 +2,81 @@
 <html>
 <head><meta charset="UTF-8"></head>
 <body>
-Move with the arrow keys. Press A to rotate Spyro. Hold S to freeze his animation.<br>
 <canvas id="gamecanvas">Your browser does not support the HTML5 canvas!</canvas>
+
+<!--/////////LEVEL EDITOR GUI///////////-->
+<div id="LE_div" style="display: none; width:290px;  vertical-align:bottom;">
+	<div id="LE_Menu"style="background-color:blue; width:290px; display: inline-block; ">
+		<button id="LE_butCreate" type="button" style="background-color:white; border:1px solid blue; border-bottom:none;">Create</button> 
+		<button id="LE_butMoveSelect" type="button" style="background-color:cornFlowerBlue; border:1px solid blue; border-bottom:none;">Move/Select</button> 
+		<button id="LE_butEdit" type="button" style="background-color:cornFlowerBlue; border:1px solid blue; border-bottom:none;">Edit</button> 
+	</div>
+	<div id="LE_Create" style="background-color:white; height:480px; border:1px solid blue; border-top:none;" >
+		<br>
+		What to create?
+		<br><br>
+		<select id="LE_SelObject" style="float:right;" name="object">
+		<option value = -1>Polygon</option>
+		</select>
+
+	</div>
+	<div id="LE_MoveSelect" style="background-color:white; height:480px; display:none; border:1px solid black; border-top:none;">
+		<br>
+		-Select, drag and drop with mouse. <br>
+		-Hold SHIFT for rectangle selection.<br>
+		-Hold CTRL to move only polygon origin and texture offset.<br>
+		<br><br><br><br><br><br><br><br>
+		<button id="LE_butSelectedDelete" type="button" style="background-color:red; margin-left:50px; border:2px solid black;">Delete Selected</button> 
+	</div>
+	<div id="LE_EditPolygon" style="background-color:white; height:480px; display:none; border:1px solid black; border-top:none;">
+		Edit Polygon:<br><p  style="border-top: 1px solid black;">
+		<input type="checkbox" id="LE_checkVisible">   Visible <br>
+		<input type="checkbox" id="LE_checkJumpThrough">   Jump through <br>
+		</p><p style="border-top: 1px solid black;">
+		<input type="radio" id="LE_RadEditPoly" name="edit" checked=true value="Polygon">Edit Polygon  (Hold CTRL to erase)<br>
+		<input type="radio" id="LE_RadEditSolid" name="edit" value="Solid">Edit Solid  (Hold CTRL for unsolid)<br>
+		<input type="radio" id="LE_RadEditDetails1" name="edit" value="Details1">Edit Details Layer 1 (behind)<br>
+		<input type="radio" id="LE_RadEditDetails2" name="edit" value="Details2">Edit Details Layer 2 (within)<br>
+		<input type="radio" id="LE_RadEditDetails3" name="edit" value="Details3">Edit Details Layer 3 (front)<br>
+		Current Detail  Type: <select id="LE_SelDetail" style="float:right;" name="detail">
+		</select>
+		</p><p style="border-top: 1px solid black;">
+		Background color: <input type="color" style="float:right;" id="LE_polyBgColor"><br>
+		</p><p>
+		</p><p style="border-top: 1px solid black;">
+		Texture: <select id="LE_SelTexture" style="float:right;" name="texture">
+		</select> <br>
+		Texture opacity: <input style="width:70px; float:right;" type="range" id="LE_polyTexOpacity" min="0" max="100">
+		</p>
+		<p style="border-top: 1px solid black;">
+		When editing Details:<br>
+		-Place with mouse, erase with CTRL.
+		-Transform by moving the mouse horizontally while holding the following keys:
+		R(Rotate), X(Xscale), Y(Yscale) and A(Opacity)<br>
+		</p>
+	</div>
+	<div id="LE_EditObject" style="background-color:white; height:480px; display:none; border:1px solid black; border-top:none;">
+	</div>
+</div>
+<div id="LE_SaveLoadDiv" style="display: none;  vertical-align:bottom; outline:1px solid black;">
+<div style="width:450px; outline:1px solid black;">
+Additional help(that didn't fit in the original GUI):<br><br>
+-Zoom in and out, and move the view with the mouse wheel.<br>
+-When in Move/Select mode, change the depth of objects and polygons with Up and Down, or Left and Right to move them all the way to the back or front.<br>
+-In Edit mode, Details can be depth rearranged in the same way.<br><br>
+</div>
+Load level data:<br>
+<button id="LE_LoadButton" type="button">Load level from data</button><br>
+<textarea id="LE_LoadArea" rows="4" cols="50"></textarea><br><br>
+
+Save level data:<br>
+<button id="LE_SaveButton" type="button">Save data from level</button><br>
+<textarea id="LE_SaveArea" rows="4" cols="50"></textarea>
+<!--/////////////////////-->
+
+
+</div>
+<script type="text/javascript" src="resources.js"></script>
 <script type="text/javascript" src="keyboard.js"></script>
 <script type="text/javascript" src="mouse.js"></script>
 <script type="text/javascript" src="graphics.js"></script>
@@ -12,8 +85,13 @@ Move with the arrow keys. Press A to rotate Spyro. Hold S to freeze his animatio
 <script type="text/javascript" src="enemy.js"></script>
 <script type="text/javascript" src="sparx.js"></script>
 <script type="text/javascript" src="gridlevel.js"></script>
+<script type="text/javascript" src="polygonlevel.js"></script>
+<script type="text/javascript" src="point.js"></script>
+<script type="text/javascript" src="polygon.js"></script>
+<script type="text/javascript" src="collision.js"></script>
 <script type="text/javascript" src="camera.js"></script>
-<script type="text/javascript" src="resources.js"></script>
+<script type="text/javascript" src="objecttypes.js"></script>
+<script type="text/javascript" src="editor.js"></script>
 <script type="text/javascript" src="spyrogame.js"></script>
 <div id="mouse">text</div>
 <div id="debugInfo">test</div>
