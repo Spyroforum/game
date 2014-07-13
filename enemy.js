@@ -4,34 +4,35 @@ function Enemy(){
 	this.y = 0;
 	this.r = 32;
 	this.spyro = null;
-	this.speed = 2;
 	this.sprite = sprEnemy;
+	this.xspeed = 0;
+	this.yspeed = 0;
+	this.maxXSpeed = 5;
+	this.acceleration = 3;
+	this.radius = 32;
 
 	this.step = function(){
-		with(this)
-		{
-		    if( spyro != null ){
-			    if( x < spyro.x )
-				    x += speed;
-			    if( x > spyro.x )
-				    x -= speed;
-			    if( y < spyro.y )
-				    y += speed;
-			    if( y > spyro.y )
-				    y -= speed;
-				
-				//Check if spyro is near
-				if( Math.abs( x - spyro.x ) < 128 && Math.abs( y - spyro.y ) < 128 ){
-				
-					//Change spyro's sprite to being hurt, and play a "scary" sound
-					if( spyro.sprite != sprSpyroHurt ){
-						spyro.sprite = sprSpyroHurt;
-						audio.playSound(sndRumble, 1, false);
-					}
-					
-				} else spyro.sprite = sprSpyro;//Change spyro back to his normal sprite if he is too far away
+	    if( this.spyro != null ){
+		    if( this.x < this.spyro.x ) this.xspeed = speedUpPlus(this.xspeed, this.acceleration, this.maxXSpeed);
+		    if( this.x > this.spyro.x ) this.xspeed = speedUpMinus(this.xspeed, this.acceleration, -this.maxXSpeed);
+			    
+			this.yspeed += gravity;
+			
+			var isCollision = objectXlevelCollision(this);
+			if( isCollision )
+		    {
+		        this.xspeed = slowDown( this.xspeed, 1.5 );
 		    }
-		}
+
+			//Check if spyro is near
+			if( Math.abs( this.x - this.spyro.x ) < 128 && Math.abs( this.y - this.spyro.y ) < 128 ){
+				//Change spyro's sprite to being hurt, and play a "scary" sound
+				if( this.spyro.sprite != sprSpyroHurt ){
+					this.spyro.sprite = sprSpyroHurt;
+					audio.playSound(sndRumble, 1, false);
+				}
+			}
+	    }
 	}
 	
 	this.draw = function(){
