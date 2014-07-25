@@ -34,9 +34,9 @@ function nearestPointOnLine(px,py,x1,y1,x2,y2){
 	<cx, cy, r> - circle center and radius
 	type - What to test against, 0: both inside and outside of circle, 1: only outside of circle, 2: only inside of circle
 	
-	Returns: the distance to where the ray first intersects with the circle, or 'null' if there is no intersection
+	Returns: true if there is an intersection, false if not
 */
-function circleLine(cx, cy, r, x1, y1, x2, y2){
+function circleXline(cx, cy, r, x1, y1, x2, y2){
 
 	//The vector from the first endpoint to the second
     var lx = x2 - x1;
@@ -54,10 +54,13 @@ function circleLine(cx, cy, r, x1, y1, x2, y2){
 		if( g < 0 ) g = 0;
 		else if( g > 1 ) g = 1;
 		//And calculate the nearest point
-		nx = x1 + g * dx;
-		ny = y1 + g * dy;
+		nx = x1 + g * lx;
+		ny = y1 + g * ly;
     }
     var dist = (cx - nx) * (cx - nx) + (cy - ny) * (cy - ny);//Squared distance from circe center to line
+	if( dist <= r * r)
+		return true;
+	else return false;
 }
 
 /*  ray x circle
@@ -68,7 +71,7 @@ function circleLine(cx, cy, r, x1, y1, x2, y2){
 	
 	Returns: the distance to where the ray first intersects with the circle, or 'null' if there is no intersection
 */
-function rayCircle(rx, ry, dx, dy, cx, cy, r, type){
+function rayXcircle(rx, ry, dx, dy, cx, cy, r, type){
 
 	var xx = cx - rx; 
 	var yy = cy - ry; 
@@ -98,7 +101,7 @@ function rayCircle(rx, ry, dx, dy, cx, cy, r, type){
 	
 	Returns: the distance to where the ray intersects with the line, or 'null' if there is no intersection
 */
-function rayLine(rx, ry, dx, dy, x1, y1, x2, y2, infinite){
+function rayXline(rx, ry, dx, dy, x1, y1, x2, y2, infinite){
 	
 	var lx, ly, d, nx, ny, a, b;
 	lx = x2 - x1;
@@ -135,7 +138,7 @@ function rayLine(rx, ry, dx, dy, x1, y1, x2, y2, infinite){
 	
 	Returns: the distance the circle can move before hitting the line, or null if it never hits
 */
-function sweptCircleLine(cx,cy,r,dx,dy,x1,y1,x2,y2){
+function sweptCircleXline(cx,cy,r,dx,dy,x1,y1,x2,y2){
 	
 	if(x2 == x1 && y2 == y1){
 		if( (cx - x1) * (cx - x1) + (cy - y1) * (cy - y1) < r * r){
@@ -209,4 +212,40 @@ function sweptCircleLine(cx,cy,r,dx,dy,x1,y1,x2,y2){
 			
 		}
 	}
+}
+
+//Collision between line and rectangle
+function lineXrect(lx1, ly1, lx2, ly2, rx, ry, w, h){
+	//check if any of the line endpoints are within the rectangle
+	if( lx1 >= rx && lx1 <= rx + w && ly1 >= ry && ly1 <= ry + h )
+		return true;
+	if( lx2 >= rx && lx2 <= rx + w && ly2 >= ry && ly2 <= ry + h )
+		return true;
+	//Check if the line intersects any of the ininite lines that the rectangle sides are part of, and check if the intersection point touches the rectangle
+	if( (lx1 < rx) ^ (lx2 < rx) ){
+		//line endpoints are on different sides of the rectangle's left side
+		var iy = ly1 + (ly2 - ly1) * (rx - lx1) / (lx2 - lx1);//y of the intersection point between the line and the infinite line the left side of the rectangle is part of
+		if( iy >= ry && iy <= ry + h )
+			return true;
+	}
+	if( (lx1 < rx + w) ^ (lx2 < rx + w) ){
+		//line endpoints are on different sides of the rectangle's right side
+		var iy = ly1 + (ly2 - ly1) * (rx + w - lx1) / (lx2 - lx1);//y of the intersection point between the line and the infinite line the right side of the rectangle is part of
+		if( iy >= ry && iy <= ry + h )
+			return true;
+	}
+	
+	if( (ly1 < ry) ^ (ly2 < ry) ){
+		//line endpoints are on different sides of the rectangle's top side
+		var ix = lx1 + (lx2 - lx1) * (ry - ly1) / (ly2 - ly1);//x of the intersection point between the line and the infinite line the top side of the rectangle is part of
+		if( ix >= rx && ix <= rx + w )
+			return true;
+	}
+	if( (ly1 < ry + h) ^ (ly2 < ry + h) ){
+		//line endpoints are on different sides of the rectangle's bottom side
+		var ix = lx1 + (lx2 - lx1) * (ry + h - ly1) / (ly2 - ly1);//x of the intersection point between the line and the infinite line the bottom side of the rectangle is part of
+		if( ix >= rx && ix <= rx + w )
+			return true;
+	}
+	return false;
 }

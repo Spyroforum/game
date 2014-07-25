@@ -8,6 +8,41 @@ function Polygon(x, y){
 	this.textureOpacity = 1;
 	this.details = [[], [], []];//Back layer of Details, clipped layer of Details and front layer of Details
 	this.visible = true;
+	this.anySolid = false;
+	this.boundingBox = null;
+	
+	//Bounding box of solid lines, and check if the polygon is solid at all
+	this.calculateBoundingBox = function(){
+		var minx = 999999999;
+		var miny = 999999999;
+		var maxx = -999999999;
+		var maxy = -999999999;
+		var l = this.points.length;
+		this.anySolid = false;
+		for(var n = 0; n < l; n++){
+			var p = this.points[n];
+			//If this point or the previous point is solid, then this point is part of a solid line and should affect the bounding box
+			if( p.solid || this.points[(n - 1 + l) % l].solid ){
+				if( p.x < minx ) minx = p.x;
+				if( p.x > maxx ) maxx = p.x;
+				if( p.y < miny ) miny = p.y;
+				if( p.y > maxy ) maxy = p.y;
+				this.anySolid = true;
+			}
+		}
+		/*if( ! this.anySolid ){
+			minx = 0;
+			miny = 0;
+			maxx = 0;
+			maxy = 0;
+		}*/
+		this.boundingBox = {
+					left:minx,
+					top:miny,
+					right:maxx,
+					bottom:maxy
+					};
+	}
 	
 	//Add a point to the end of the list of points
 	this.addPoint = function(newx, newy, newsolid){
@@ -75,10 +110,13 @@ function Polygon(x, y){
 				
 				this.drawDetailsLayer(2);//Front layer
 				
+				
 			context.restore();
 		}
 	}
-	
+	this.drawBoundingBox = function(){
+		context.strokeRect(this.boundingBox.left + this.position.x, this.boundingBox.top + this.position.y, this.boundingBox.right - this.boundingBox.left,  this.boundingBox.bottom - this.boundingBox.top);
+	}
 	//Draw the polygon shape as a texture or outline
 	// 'context' - the context of the canvas to draw to
 	// 'texture' - if the polygon should be drawn with a specific texture, specify that here, otherwise leave set it to 'null'

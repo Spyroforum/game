@@ -7,8 +7,8 @@ function Enemy(){
 	this.sprite = sprEnemy;
 	this.xspeed = 0;
 	this.yspeed = 0;
-	this.maxXSpeed = 5;
-	this.acceleration = 3;
+	this.maxXSpeed = 10;
+	this.acceleration = 1;
 	this.radius = 32;
 
 	this.step = function(){
@@ -18,12 +18,22 @@ function Enemy(){
 			    
 			this.yspeed += gravity;
 			
-			var isCollision = objectXlevelCollision(this);
+			var speed = Math.sqrt(this.xspeed * this.xspeed + this.xspeed * this.xspeed);
+			var nearLines = levelPartCircle(this.x, this.y, this.radius * 2 + speed);
+			var isCollision = objectXlevelPartCollision( this, nearLines );//objectXlevelCollision(this);
 			if( isCollision )
 		    {
 		        this.xspeed = slowDown( this.xspeed, 1.5 );
 		    }
-
+			
+			//--Check if on ground, copied from spyro.js
+			var nearLinesNotOverlapping = nearLines.slice();//copies nearLines
+			levelPartRemoveCircle(nearLinesNotOverlapping, this.x, this.y, this.radius * 0.99);
+			var onGround = circleXlevelPart(this.x, this.y + this.radius * 0.05 + 1, this.radius * 0.99 * 0.95, nearLinesNotOverlapping);
+			
+			//Jump randomly
+			if( onGround && Math.random() < 0.1 ) this.yspeed -= 25; 
+			
 			//Check if spyro is near
 			if( Math.abs( this.x - this.spyro.x ) < 128 && Math.abs( this.y - this.spyro.y ) < 128 ){
 				//Change spyro's sprite to being hurt, and play a "scary" sound

@@ -2,6 +2,91 @@
 function PolygonLevel(){
 	this.polygons = [];
 	this.objects = [];
+	this.collisionGrid = null;
+	
+	//Generate a collision grid, a rectangle covering all solid lines of polygons, split into smaller cells containing references to overlapping solid polygon lines
+	//Each cell will contain an array. Each of those arrays(if there are any solid lines touching the cell), will consist of objects with a polygonInd property and a pointInd property
+	//polygonInd is the index of the polygon that contains the line, while pointInd is the index of the line's first endpoint in that polygon's list of points.
+	//Example: var poly = objLevel.polygons[polygonInd];
+	//var point = poly.points[pointInd];
+	this.generateCollisionGrid = function(cellSize){
+		//Calculate the bounding box of the level
+		var minx = 999999999;
+		var miny = 999999999;
+		var maxx = -999999999;
+		var maxy = -999999999;
+		var l = this.polygons.length;
+		for(var n = 0; n < l; n++){
+			var poly = this.polygons[n];
+			if( poly.anySolid ){
+				if( minx > poly.position.x + poly.boundingBox.left ) 
+					minx = poly.position.x + poly.boundingBox.left;
+				if( maxx < poly.position.x + poly.boundingBox.right) 
+					maxx = poly.position.x + poly.boundingBox.right;
+				if( miny > poly.position.y + poly.boundingBox.top ) 
+					miny = poly.position.y + poly.boundingBox.top;
+				if( maxy < poly.position.y + poly.boundingBox.bottom) 
+					maxy = poly.position.y + poly.boundingBox.bottom;
+			}
+		}
+		//Add this bounding box to the collision grid object
+		var g = {
+			x: minx,//top left corner x
+			y: miny,//top left corner y
+			width: maxx - minx,//width of the grid in pixels
+			height: maxy - miny,//height
+			cellSize: cellSize,//size of each cell in pixels
+			cell: []
+		}
+		g.cellsX = Math.ceil(g.width / cellSize);//Number of columns
+		g.cellsY = Math.ceil(g.height / cellSize);//Number of rows
+		g.cell.length = g.cellsX;
+		//Create the actual 2d grid/array, and add an array to each cell
+		for(var x = 0; x < g.cellsX; x++){
+			g.cell[x] = [];
+			g.cell[x].length = g.cellsY;
+			for(var y = 0; y < g.cellsX; y++){
+				g.cell[x][y] = [];
+			}
+		}
+		
+		//Loop through polygons
+		for(var n = 0; n < l; n++){
+			var poly = this.polygons[n];
+			if( poly.anySolid ){
+				var numPoints = poly.points.length;
+				//Loop through their lines
+				for(var m = 0; m < numPoints; m++){
+					var p1 = poly.points[m];
+					if( p1.solid ){
+						var p2 = poly.points[(m + 1) % numPoints];
+						//Find the range of cells that the line might be overlapping
+						var ax, ay, bx, by;
+						ax = Math.max(0, Math.floor((Math.min(p1.x, p2.x) + poly.position.x - g.x) / cellSize));
+						bx = Math.min(g.cellsX, Math.ceil((Math.max(p1.x, p2.x) + poly.position.x - g.x) / cellSize));
+						ay = Math.max(0, Math.floor((Math.min(p1.y, p2.y) + poly.position.y - g.y) / cellSize));
+						by = Math.min(g.cellsY, Math.ceil((Math.max(p1.y, p2.y) + poly.position.y - g.y) / cellSize));
+						
+						//Loop through those cells
+						for(var x = ax; x < bx; x++){
+							for(var y = ay; y < by; y++){
+								//Check if the line actually intersects with the cell
+								if( lineXrect(p1.x, p1.y, p2.x, p2.y, (g.x + x * cellSize - poly.position.x), (g.y + y * cellSize - poly.position.y), cellSize, cellSize) ){
+									//Add the line to the list of lines in the current cell, as array indexes that point to the line
+									var lineRef = {
+										polygonInd: n,//This polygon's position in the level's array of polygons
+										pointInd: m//Position of this line's first endpoint in the polygon's array of points
+									}
+									g.cell[x][y].push(lineRef);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		this.collisionGrid = g;
+	}
 	
 	//Create a list for each object type. These can then be accessed with(for example): this.Spyro[0], or this.Gem[n] where n is gem number n in the level.
 	//Or they can be accessed the way they are created, bracket style: this["Spyro"][0] or this["Gem"][n]
@@ -11,6 +96,14 @@ function PolygonLevel(){
 	
 	this.init = function(){
 		//Do stuff in addition to loading the contents of a level.
+		
+		//Make all polygons calculate their bounding boxes
+		var l = this.polygons.length;
+		for(var n = 0; n < l; n++){
+			this.polygons[n].calculateBoundingBox();
+		}
+		//Generate collision grid
+		this.generateCollisionGrid(200);
 		
 		objSpyro = this.Spyro[0];
 		
@@ -37,19 +130,18 @@ function PolygonLevel(){
 	
 	this.draw = function(){
 		context.save();
-		
 		//Draw all polygons
 		var l = this.polygons.length;
 		for(var n = 0; n < l; n++){
 			this.polygons[n].draw(context);
 		}
 		
+		
 		//Draw all objects
 		l = this.objects.length;
 		for(var n = 0; n < l; n++){
 			this.objects[n].draw();
 		}
-		
 		context.restore();
 	}
 	
