@@ -8,12 +8,12 @@ var leftKey, upKey, rightKey, downKey, aKey, sKey, spaceKey, shiftKey, controlKe
 
 
 //Objects
+var objTimer = null;
 var objLevel = null;
 var objEditor = null;
 var objSpyro = null;
 var objSparx = null;
 var objCamera = null;
-// objEnemy is removed from here because there are multiple instances of it in a level
 var gravity = 1.5;
 
 //Sprites
@@ -92,29 +92,38 @@ function gameInit(){
 	}
 	
 	//Start the game loop
-	gameLoop = this.setInterval("gameStep()", 1000 / 30);
+	objTimer = new Timer( 1000/30, gameStep, gameDraw );
+	gameLoop = this.setInterval("objTimer.update()", 1);
 }
+
+
+function gameDraw(){
+    if( resources.loaded ){
+		if( objEditor == null ){
+		    // Clear the canvas with a pink background colour
+			context.setTransform(1, 0, 0, 1, 0, 0);
+			context.fillStyle = 'rgb(185, 140, 170)';
+			context.fillRect(0, 0, screenWidth, screenHeight);
+		    objCamera.setView(context);
+		    objLevel.draw();
+		} else {
+		    objEditor.draw();
+		}
+    }
+}
+
 
 function gameStep(){
 	if( resources.loaded ){
 		if( objEditor == null ){
-			//Clear the canvas with a pink background colour
-			context.setTransform(1, 0, 0, 1, 0, 0);
-			context.fillStyle = 'rgb(185, 140, 170)';
-			context.fillRect(0, 0, screenWidth, screenHeight);
-			
 			objLevel.step();
 			objCamera.step();
-			objCamera.setView(context);
-			objLevel.draw();
-
 		} else {
 			objEditor.step();
-			objEditor.draw();
 		}
 	} else {
 		resources.loadStep();
 	}
-	keyboard.update();//Make keys go to the state of just being held or untouched after being pressed or released
+	keyboard.update(); // Make keys go to the state of just being held or untouched after being pressed or released
 	mouse.update();
 }
