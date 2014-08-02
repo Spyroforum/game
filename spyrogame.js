@@ -2,6 +2,7 @@
 //General:
 var canvas = document.getElementById("gamecanvas"), context = canvas.getContext("2d");
 var gameLoop, screenWidth, screenHeight;
+var redraw = 0;
 
 //Keyboard keys
 var leftKey, upKey, rightKey, downKey, aKey, sKey, spaceKey, shiftKey, controlKey;
@@ -92,24 +93,14 @@ function gameInit(){
 	}
 	
 	//Start the game loop
-	objTimer = new Timer( 1000/30, gameStep, gameDraw );
+	objTimer = new Timer( 1000/30, gameStep, repaint );
 	gameLoop = this.setInterval("objTimer.update()", 1);
 }
 
 
-function gameDraw(){
-    if( resources.loaded ){
-		if( objEditor == null ){
-		    // Clear the canvas with a pink background colour
-			context.setTransform(1, 0, 0, 1, 0, 0);
-			context.fillStyle = 'rgb(185, 140, 170)';
-			context.fillRect(0, 0, screenWidth, screenHeight);
-		    objCamera.setView(context);
-		    objLevel.draw();
-		} else {
-		    objEditor.draw();
-		}
-    }
+function repaint()
+{
+    redraw = 1;
 }
 
 
@@ -126,4 +117,25 @@ function gameStep(){
 	}
 	keyboard.update(); // Make keys go to the state of just being held or untouched after being pressed or released
 	mouse.update();
+
+	if( redraw ) gameDraw();
 }
+
+
+function gameDraw(){
+    if( resources.loaded ){
+		if( objEditor == null ){
+		    // Clear the canvas with a pink background colour
+			context.setTransform(1, 0, 0, 1, 0, 0);
+			context.fillStyle = 'rgb(185, 140, 170)';
+			context.fillRect(0, 0, screenWidth, screenHeight);
+		    objCamera.setView(context);
+		    objLevel.draw();
+		} else {
+		    objEditor.draw();
+		}
+    }
+    
+    redraw = 0;
+}
+
