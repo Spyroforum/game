@@ -1,5 +1,5 @@
 
-function PolygonLevel(){
+function PolygonLevel( str ){
 	this.polygons = [];
 	this.objects = [];
 	this.collisionGrid = null;
@@ -129,6 +129,12 @@ function PolygonLevel(){
 	}
 	
 	this.draw = function(){
+	    // Clear the canvas with a pink background colour
+		context.setTransform(1, 0, 0, 1, 0, 0);
+		context.fillStyle = 'rgb(185, 140, 170)';
+		context.fillRect(0, 0, screenWidth, screenHeight);
+	    objCamera.setView(context);
+	
 		context.save();
 		//Draw all polygons
 		var l = this.polygons.length;
@@ -295,4 +301,7 @@ function PolygonLevel(){
 			ind = str.indexOf("@", ind);
 		}
 	}
+	
+	this.loadString(str);
+	this.init();
 }

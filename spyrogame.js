@@ -3,13 +3,14 @@
 var canvas = document.getElementById("gamecanvas"), context = canvas.getContext("2d");
 var gameLoop, screenWidth, screenHeight;
 var redraw = 0;
+var objTimer = null;
+var mainMenu = null;
 
 //Keyboard keys
-var leftKey, upKey, rightKey, downKey, aKey, sKey, spaceKey, shiftKey, controlKey;
+var leftKey, upKey, rightKey, downKey, aKey, sKey, spaceKey, shiftKey, controlKey, returnKey;
 
 
 //Objects
-var objTimer = null;
 var objLevel = null;
 var objEditor = null;
 var objSpyro = null;
@@ -62,13 +63,13 @@ function gameInit(){
 	spaceKey = keyboard.addKey(32);
 	shiftKey = keyboard.addKey(16);
 	controlKey = keyboard.addKey(17);
+	returnKey = keyboard.addKey(13);
 	aKey = keyboard.addKey(ord("A"));
 	sKey = keyboard.addKey(ord("S"));
 	rKey = keyboard.addKey(ord("R"));
 	xKey = keyboard.addKey(ord("X"));
 	yKey = keyboard.addKey(ord("Y"));
 	cKey = keyboard.addKey(ord("C"));
-	
 	
 	objSparx = new Sparx();
 	objCamera = new Camera();
@@ -78,23 +79,10 @@ function gameInit(){
 	var x = addObjectType("Enemy", false, false, sprEnemy, Enemy);
 	addObjectTypeProperty(x, "gemDrop", "The combined value of the gems the enemy should drop.", 5);//Default value is set to 5
 	
-	//Show a couple of questions to let the user decide whether to open the level editor or run a level
-	var r = confirm("Open level editor?(OK) Or play a level?(Cancel)");
-	if (r == true) {
-		objEditor = new Editor();
-	} else {
-		objLevel = new PolygonLevel();
-		var l = confirm("Big level that may lagg?(OK) Or small level?(Cancel)");
-		if( l )
-			objLevel.loadString(levelString[0]);
-		else
-			objLevel.loadString(levelString[1]);
-		objLevel.init();
-	}
-	
 	//Start the game loop
+	mainMenu = new MainMenu();
 	objTimer = new Timer( 1000/30, gameStep, repaint );
-	gameLoop = this.setInterval("objTimer.update()", 1);
+	gameLoop = this.setInterval( "objTimer.update()", 1 );
 }
 
 
@@ -106,7 +94,10 @@ function repaint()
 
 function gameStep(){
 	if( resources.loaded ){
-		if( objEditor == null ){
+	    if( mainMenu.active ){
+	        mainMenu.step();
+	    }
+		else if( objEditor == null ){
 			objLevel.step();
 			objCamera.step();
 		} else {
@@ -124,12 +115,10 @@ function gameStep(){
 
 function gameDraw(){
     if( resources.loaded ){
-		if( objEditor == null ){
-		    // Clear the canvas with a pink background colour
-			context.setTransform(1, 0, 0, 1, 0, 0);
-			context.fillStyle = 'rgb(185, 140, 170)';
-			context.fillRect(0, 0, screenWidth, screenHeight);
-		    objCamera.setView(context);
+        if( mainMenu.active ){
+            mainMenu.draw();
+        }
+		else if( objEditor == null ){
 		    objLevel.draw();
 		} else {
 		    objEditor.draw();
