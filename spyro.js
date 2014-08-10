@@ -70,28 +70,6 @@ function Spyro(){
 		context.beginPath();
 		context.arc(this.x,this.y,32,0,2*Math.PI);
 		context.stroke();
-		//Debug drawing
-			//Draw some near lines
-			var nearLines = levelPartCircle(this.x, this.y, this.radius * 2);
-			var l = nearLines.length;
-			context.strokeStyle = "red";
-			context.beginPath();
-			for(var n = 0; n < l; n++){
-				var poly = objLevel.polygons[nearLines[n].polygonInd];
-				var p1 = poly.points[nearLines[n].pointInd];
-				var p2 = poly.points[(nearLines[n].pointInd + 1) % poly.points.length];
-				context.moveTo(p1.x + poly.position.x, p1.y + poly.position.y);
-				context.lineTo(p2.x + poly.position.x, p2.y + poly.position.y);
-			}
-			context.stroke();
-			//Draw the area of the level that Spyro tests for lines in
-			//(not completely accurate as this doesn't take his speed and therefore larger test radius, but it shows the size of the collision grid cells)
-			var g = objLevel.collisionGrid;
-			context.strokeRect(g.x + Math.floor((this.x - this.radius * 2 - g.x)/g.cellSize) * g.cellSize, 
-				g.y + Math.floor((this.y - this.radius * 2 - g.y)/g.cellSize) * g.cellSize,
-				Math.ceil((this.x + this.radius * 2 - g.x)/g.cellSize) * g.cellSize - Math.floor((this.x - this.radius * 2 - g.x)/g.cellSize) * g.cellSize, 
-				Math.ceil((this.y + this.radius * 2 - g.y)/g.cellSize) * g.cellSize - Math.floor((this.y - this.radius * 2 - g.y)/g.cellSize) * g.cellSize);
-			
 		this.sprite = sprSpyro;
     }
 }

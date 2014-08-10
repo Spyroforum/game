@@ -101,6 +101,7 @@ function PolygonLevel( str ){
 		var l = this.polygons.length;
 		for(var n = 0; n < l; n++){
 			this.polygons[n].calculateBoundingBox();
+			this.polygons[n].calculateGraphicalBoundingBox();
 		}
 		//Generate collision grid
 		this.generateCollisionGrid(200);
@@ -129,26 +130,29 @@ function PolygonLevel( str ){
 	}
 	
 	this.draw = function(){
-	    // Clear the canvas with a pink background colour
-		context.setTransform(1, 0, 0, 1, 0, 0);
-		context.fillStyle = 'rgb(185, 140, 170)';
-		context.fillRect(0, 0, screenWidth, screenHeight);
-	    objCamera.setView(context);
-	
-		context.save();
-		//Draw all polygons
-		var l = this.polygons.length;
-		for(var n = 0; n < l; n++){
-			this.polygons[n].draw(context);
-		}
+		for( var g = 0; g < 1; g++){
+			
+			// Clear the canvas with a pink background colour
+			context.setTransform(1, 0, 0, 1, 0, 0);
+			context.fillStyle = 'rgb(185, 140, 170)';
+			context.fillRect(0, 0, screenWidth, screenHeight);
+			objCamera.setView(context);
 		
-		
-		//Draw all objects
-		l = this.objects.length;
-		for(var n = 0; n < l; n++){
-			this.objects[n].draw();
+			context.save();
+			//Draw all polygons
+			var l = this.polygons.length;
+			for(var n = 0; n < l; n++){
+				this.polygons[n].draw(context);
+			}
+			
+			
+			//Draw all objects
+			l = this.objects.length;
+			for(var n = 0; n < l; n++){
+				this.objects[n].draw();
+			}
+			context.restore();
 		}
-		context.restore();
 	}
 	
 	this.loadString = function(str){

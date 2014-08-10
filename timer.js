@@ -7,7 +7,7 @@ function SubTimer(delay){
     this.min_delay = delay; // note: draw timer only
     this.max_delay = 1000; // note: draw timer only
         
-    
+	
     /**
         Updates stack value.
         
@@ -36,13 +36,13 @@ function SubTimer(delay){
     
     
     /**
-        Adds -1 to delay.
+        Adds -10 to delay. (previously -1)
         Delay won't get below its minimum.
         note: draw timer only
     */
     this.lessDelay = function()
     {
-        this.delay--;
+        this.delay-=10;//--;
         if( this.delay < this.min_delay )
             this.delay = this.min_delay;
     }
