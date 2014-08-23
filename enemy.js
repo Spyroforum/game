@@ -18,12 +18,12 @@ function Enemy(){
 			    
 			this.yspeed += gravity;
 			
-			var speed = Math.sqrt(this.xspeed * this.xspeed + this.xspeed * this.xspeed);
+            var speed = Math.sqrt(this.xspeed * this.xspeed + this.yspeed * this.yspeed);
 			var nearLines = levelPartCircle(this.x, this.y, this.radius * 2 + speed);
 			var isCollision = objectXlevelPartCollision( this, nearLines );//objectXlevelCollision(this);
 			if( isCollision )
 		    {
-		        this.xspeed = slowDown( this.xspeed, 1.5 );
+                this.xspeed = slowDown( this.xspeed, 1.5 );
 		    }
 			
 			//--Check if on ground, copied from spyro.js

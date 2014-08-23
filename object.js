@@ -1,6 +1,34 @@
 
-function slowDown( speed, acceleration )
-{
+/**
+    Object requirements:
+        x, y
+*/
+function objectDistance( obj1, obj2 ){
+    var dx = obj1.x - obj2.x;
+    var dy = obj1.y - obj2.y;
+    return Math.sqrt( dx*dx + dy*dy );
+}
+
+
+/**
+    Object requirements:
+        x, y, radius
+*/
+function objectCollide( obj1, obj2 ){
+    return ( objectDistance( obj1, obj2 ) < ( obj1.radius + obj2.radius ) );
+}
+
+
+/**
+    Object requirements:
+        x, y, radius
+*/
+function objectCollideDistance( obj1, obj2, dist ){
+    return ( objectDistance( obj1, obj2 ) < ( obj1.radius + obj2.radius + dist ) );
+}
+
+
+function slowDown( speed, acceleration ){
     if( speed > 0 )
     {
         speed -= acceleration;

@@ -43,7 +43,7 @@ function Spyro(){
 		}
 		
 		//Movement and collision with terrain
-		var speed = Math.sqrt(this.xspeed * this.xspeed + this.xspeed * this.xspeed);
+        var speed = Math.sqrt(this.xspeed * this.xspeed + this.yspeed * this.yspeed);
 		var nearLines = levelPartCircle(this.x, this.y, this.radius * 2 + speed);
 		
 		//--Check if Spyro is on the ground--
@@ -60,6 +60,14 @@ function Spyro(){
 		    this.xspeed = slowDown( this.xspeed, 1.5 );
 			if( keyboard.isPressed(upKey) ) this.jump();
 		}
+
+        // search for gems to pick
+        for( var i = 0; i < objLevel.Gem.length; i++ ){
+            if( objectCollide( this, objLevel.Gem[i] ) ){
+                objLevel.Gem[i].alive = false;
+                // TODO: increase gem count, remove gem from level object array
+            }
+        }
 		
 		this.frame += this.animSpeed;
 	}
