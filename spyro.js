@@ -42,26 +42,43 @@ function Spyro(){
 			this.yspeed = 0;
 		}
 		
-		//Movement and collision with terrain
-        var speed = Math.sqrt(this.xspeed * this.xspeed + this.yspeed * this.yspeed);
-		var nearLines = levelPartCircle(this.x, this.y, this.radius * 2 + speed);
+		// Movement and collision with terrain
 		
-		//--Check if Spyro is on the ground--
-		var nearLinesNotOverlapping = nearLines.slice();//copies nearLines
-		//Remove the lines that Spyro is currently overlapping, because that means they must be jump-through and that he is inside them, so they shouldn't be counted as ground
-		levelPartRemoveCircle(nearLinesNotOverlapping, this.x, this.y, this.radius * 0.99);
-		//Test with the remaining lines and a circle with a slightly reduced radius, moved down a small distance
-		var onGround = circleXlevelPart(this.x, this.y + this.radius * 0.05 + 1, this.radius * 0.99 * 0.95, nearLinesNotOverlapping);
-		
-		
-		var isCollision = objectXlevelPartCollision( this, nearLines );
-		if( onGround )
-		{
-		    this.xspeed = slowDown( this.xspeed, 1.5 );
-			if( keyboard.isPressed(upKey) ) this.jump();
-		}
+			// Calculate Spyro's current speed
+			var speed = Math.sqrt(this.xspeed * this.xspeed + this.yspeed * this.yspeed);
+			// Extract a list of all lines within a (2 * radius + speed) distance from Spyro, because these are the only ones he could possibly collide with
+			var nearLines = levelPartCircle(this.x, this.y, this.radius * 2 + speed); 
+			
+			// Check if Spyro is on the ground
+				//We need to test if there are any lines directly below Spyro to tell if he is on the ground
+				
+				// (1)First make a copy of nearLines
+				var nearLinesNotOverlapping = nearLines.slice();// .slice() without anything in the parentheses simply creates a copy of the array
+				// This copy still contains eventual lines that Spyro might overlap with, such as jump-through ones, so
+				// we need to remove those, so that we can test against only those roughly in his periphery.
+				// (2) remove from the copy, all lines within a distance of radius * 0.99 from Spyro's current position.
+				// Multiplying the radius with 0.99 is just to be sure we don't remove lines that Spyro might actually be standing on.
+				levelPartRemoveCircle(nearLinesNotOverlapping, this.x, this.y, this.radius * 0.99);
+				// (3) Now the copy only contains the lines outside of Spyro. To see if he's standing on any of them, we do 
+				// a circle intersection test with these remaining lines. 
+				// The circle we use is a very slightly shrunk and lowered version of Spyro's circle.
+				// If we ignore the '+ 1' for the y displacement of the circle, the circle is sizeFactor times as big as Spyro's circle,
+				// with it's bottom point placed exactly at Spyro's circle's bottom point.
+				var sizeFactor = 0.95;
+				var onGround = circleXlevelPart(this.x, this.y + this.radius * (1 - sizeFactor) + 1, this.radius * sizeFactor, nearLinesNotOverlapping);
+				// If there is a line directly below Spyro, circleXlevelPart() will return 'true'.
+			
+			// 'objectXlevelPartCollision()' makes Spyro move, collide and slide naturally against the 
+			// lines in 'nearLines' while taking the jump-through-ability of lines in consideration
+			var isCollision = objectXlevelPartCollision( this, nearLines );
+			
+			if( onGround )
+			{
+				this.xspeed = slowDown( this.xspeed, 1.5 );
+				if( keyboard.isPressed(upKey) ) this.jump();
+			}
 
-        // search for gems to pick
+		// search for gems to pick
         for( var i = 0; i < objLevel.Gem.length; i++ ){
             if( objectCollide( this, objLevel.Gem[i] ) ){
                 objLevel.Gem[i].alive = false;
