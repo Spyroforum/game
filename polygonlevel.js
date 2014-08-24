@@ -95,8 +95,9 @@ function PolygonLevel( str ){
 	}
 	
 	this.init = function(){
-		//Do stuff in addition to loading the contents of a level.
 		
+		//Do stuff in addition to loading the contents of a level.
+
 		//Make all polygons calculate their bounding boxes
 		var l = this.polygons.length;
 		for(var n = 0; n < l; n++){
@@ -123,7 +124,7 @@ function PolygonLevel( str ){
 	this.step = function(){
 		
 		//Make all objects in the level run their step function
-		l = this.objects.length;
+		var l = this.objects.length;
 		for(var n = 0; n < l; n++){
 			this.objects[n].step();
 		}
@@ -279,7 +280,9 @@ function PolygonLevel( str ){
 			var ind2 = str.indexOf("]",ind);
 			var obj = new type.constr();
 			this.objects.push(obj);
-			this[typeName].push(obj);
+			var constrName = type.constr.toString().match(/function (\w*)/)[1];
+			this[constrName].push(obj);//add obj to an array belonging to the polygonlevel, with the same name as obj's constructor
+			//Previous code for above two lines: this[typeName].push(obj);
 			
 			obj.x = parseFloat(str.substring(str.indexOf("x:", ind) + 2 , str.indexOf("£", ind))); 
 			ind = str.indexOf("£", ind) + 1; 
