@@ -91,7 +91,8 @@ function PolygonLevel( str ){
 	//Create a list for each object type. These can then be accessed with(for example): this.Spyro[0], or this.Gem[n] where n is gem number n in the level.
 	//Or they can be accessed the way they are created, bracket style: this["Spyro"][0] or this["Gem"][n]
 	for(var n = 0; n < objectTypes.length; n++){
-		this[objectTypes[n].name] = [];
+		var constrName = objectTypes[n].constr.toString().match(/function (\w*)/)[1];
+		this[constrName] = [];
 	}
 	
 	this.init = function(){
@@ -118,6 +119,21 @@ function PolygonLevel( str ){
 		//Tell all enemies what object is Spyro
 		for(var n = 0; n < this.Enemy.length; n++){
 			this.Enemy[n].spyro = objSpyro;
+		}
+		
+		//Make all gems set their sprite depending on their value
+		for(var n = 0; n < this.Gem.length; n++){
+			var val = this.Gem[n].value;
+			if( val == 1 )
+				this.Gem[n].sprite = sprGemRed;
+			else if( val == 2 )
+				this.Gem[n].sprite = sprGemGreen;
+			else if( val == 5 )
+				this.Gem[n].sprite = sprGemBlue;
+			else if( val == 10 )
+				this.Gem[n].sprite = sprGemYellow;
+			else if( val == 25 )
+				this.Gem[n].sprite = sprGemPurple;
 		}
 	}
 	
