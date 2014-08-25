@@ -81,6 +81,10 @@ function Spyro(){
 		// search for gems to pick
         for( var i = 0; i < objLevel.Gem.length; i++ ){
             if( objectCollide( this, objLevel.Gem[i] ) ){
+                // fix if spyro collected the gem faster than sparx
+                if( objSparx.gem == objLevel.Gem[i] )
+                    objSparx.gem = null;
+
                 objLevel.Gem[i].alive = false;
                 // TODO: increase gem count, remove gem from level object array
             }
