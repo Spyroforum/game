@@ -51,6 +51,7 @@ function Sparx(){
             // search for gems to pick
             for( var i = 0; i < objLevel.Gem.length; i++ ){
                 if( objLevel.Gem[i].spyro != null ) continue;
+                if( objLevel.Gem[i].alive == false ) continue;
                 if( objectCollideDistance( objLevel.Gem[i], this.spyro, SPARX_SIGHT ) ){
                     this.gem = objLevel.Gem[i];
                     break;
