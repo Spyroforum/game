@@ -37,7 +37,8 @@ function addObjectType(name, onlyOne, mustExist, sprite, constr){
 		mustExist: mustExist,
 		properties: [],
 		spr: sprite,
-		constr: constr
+		constr: constr,
+		constrName: constr.toString().match(/function (\w*)/)[1]//Extracts the name of the constructor from the constructor function code text
 	};
 	
 	objectTypes.push(objType);

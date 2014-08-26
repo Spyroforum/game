@@ -91,8 +91,7 @@ function PolygonLevel( str ){
 	//Create a list for each object type. These can then be accessed with(for example): this.Spyro[0], or this.Gem[n] where n is gem number n in the level.
 	//Or they can be accessed the way they are created, bracket style: this["Spyro"][0] or this["Gem"][n]
 	for(var n = 0; n < objectTypes.length; n++){
-		var constrName = objectTypes[n].constr.toString().match(/function (\w*)/)[1];
-		this[constrName] = [];
+		this[objectTypes[n].constrName] = [];
 	}
 	
 	this.init = function(){
@@ -106,7 +105,7 @@ function PolygonLevel( str ){
 			this.polygons[n].calculateGraphicalBoundingBox();
 		}
 		//Generate collision grid
-		this.generateCollisionGrid(200);
+		this.generateCollisionGrid(200);//cell size of 200 * 200 px
 		
 		objSpyro = this.Spyro[0];
 		
@@ -143,6 +142,27 @@ function PolygonLevel( str ){
 		var l = this.objects.length;
 		for(var n = 0; n < l; n++){
 			this.objects[n].step();
+		}
+		
+		//Remove "dead" objects from the object lists
+		for(var n = 0; n < l; n++){
+			var o = this.objects[n];
+			if( o.alive != null ){
+				if( ! o.alive ){
+					//If the object is not alive, remove it from the 'objects' list
+					this.objects.splice(n, 1);
+					n --;
+					l--;
+					
+					//if the object is in one of the object type specific lists, remove it from there
+					if( o.objectTypeInd != null ){
+						var objListName = objectTypes[o.objectTypeInd].constrName;
+						var ind = this[objListName].indexOf(o);
+						if( ind != -1 )
+							this[objListName].splice(ind, 1); 
+					}
+				}
+			}
 		}
 	}
 	
@@ -295,9 +315,9 @@ function PolygonLevel( str ){
 			
 			var ind2 = str.indexOf("]",ind);
 			var obj = new type.constr();
+			obj.objectTypeInd = n;
 			this.objects.push(obj);
-			var constrName = type.constr.toString().match(/function (\w*)/)[1];
-			this[constrName].push(obj);//add obj to an array belonging to the polygonlevel, with the same name as obj's constructor
+			this[objectTypes[n].constrName].push(obj);//add obj to an array belonging to the polygonlevel, with the same name as obj's constructor
 			//Previous code for above two lines: this[typeName].push(obj);
 			
 			obj.x = parseFloat(str.substring(str.indexOf("x:", ind) + 2 , str.indexOf("£", ind))); 
