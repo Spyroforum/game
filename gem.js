@@ -10,6 +10,7 @@ function Gem(){
     this.value = 1;    // number to be added to gem count when picked
     this.alive = true; // tells if the gem should be removed from the array
     this.sspeed = 0;   // move speed when picked by sparx
+	this.settled = false; // whether the gem has settled in place or not
 
     this.step = function(){
         if( this.alive == false ) return;
@@ -25,21 +26,21 @@ function Gem(){
 
             // increase move speed so spyro can't run away from the gem
             this.sspeed = speedUpPlus( this.sspeed, 0.02, 1 );
-        } else {
-            this.yspeed += gravity;
-
-            var xold = this.x;
-            var yold = this.y;
+        } else if( ! this.settled ){
+			this.yspeed += gravity;
 
             var speed = Math.sqrt(this.xspeed * this.xspeed + this.yspeed * this.yspeed);
             var nearLines = levelPartCircle(this.x, this.y, this.radius * 2 + speed);
             var isCollision = objectXlevelPartCollision( this, nearLines );
-
+			
             if( isCollision ){
-                // gems didn't stick on their positions, so I added this quick fix (might need improvement)
-                this.x = xold;
-                this.y = yold;
-                this.yspeed = 0;
+                // slow down
+				var ret = slowDownXY( this.xspeed, this.yspeed, 2 );
+				this.xspeed = ret.xspeed;
+				this.yspeed = ret.yspeed;
+				
+				if( this.xspeed == 0 && this.yspeed == 0 )
+					this.settled = true; // stop moving, and don't do more collision checking with the terrain
             }
         }
     }

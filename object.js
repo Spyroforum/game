@@ -43,6 +43,21 @@ function slowDown( speed, acceleration ){
     return speed;
 }
 
+function slowDownXY( xspeed, yspeed, decceleration ){
+	var spd = Math.sqrt(xspeed * xspeed + (yspeed) * (yspeed));
+	if( spd > 0 ){
+		var deccSpd = spd - decceleration;
+		if( deccSpd > 0 ){
+			xspeed *= deccSpd / spd;
+			yspeed *= deccSpd / spd;
+		} else {
+			xspeed = 0;
+			yspeed = 0;
+		}
+	}
+	return {xspeed:xspeed, yspeed:yspeed};
+}
+
 
 function speedUpPlus(speed, acceleration, maximum){
     if( speed < maximum ){

@@ -12,6 +12,7 @@ function Spyro(){
 	this.rotation = 0;
 	this.radius = 32;
 	this.acceleration = 3;
+	this.onGround = false;
 	
 	this.jump = function(){
 	    this.yspeed -= 17;
@@ -34,7 +35,8 @@ function Spyro(){
 		}
 		
 		//Vertical movement
-		this.yspeed += gravity;
+		if( ! this.onGround ) // this should probably be changed slightly if/when we add slippery terrain
+			this.yspeed += gravity;
 		
 		//Stop in mid-air when holding space
 		if( keyboard.isHeld(spaceKey) ){
@@ -65,16 +67,25 @@ function Spyro(){
 				// If we ignore the '+ 1' for the y displacement of the circle, the circle is sizeFactor times as big as Spyro's circle,
 				// with it's bottom point placed exactly at Spyro's circle's bottom point.
 				var sizeFactor = 0.95;
-				var onGround = circleXlevelPart(this.x, this.y + this.radius * (1 - sizeFactor) + 1, this.radius * sizeFactor, nearLinesNotOverlapping);
+				this.onGround = circleXlevelPart(this.x, this.y + this.radius * (1 - sizeFactor) + 1, this.radius * sizeFactor, nearLinesNotOverlapping);
 				// If there is a line directly below Spyro, circleXlevelPart() will return 'true'.
+							
+			if( this.onGround ){//Friction when not holding holding left/right keys
+				if( ! keyboard.isHeld(leftKey) && ! keyboard.isHeld(rightKey) ){
+					var ret = slowDownXY( this.xspeed, this.yspeed, 1.5 );
+					this.xspeed = ret.xspeed;
+					this.yspeed = ret.yspeed;
+				}
+			}
 			
 			// 'objectXlevelPartCollision()' makes Spyro move, collide and slide naturally against the 
 			// lines in 'nearLines' while taking the jump-through-ability of lines in consideration
+			
 			var isCollision = objectXlevelPartCollision( this, nearLines );
 			
-			if( onGround )
-			{
-				this.xspeed = slowDown( this.xspeed, 1.5 );
+			if( this.onGround )
+			{	
+				//this.xspeed = slowDown( this.xspeed, 1.5 );
 				if( keyboard.isPressed(upKey) ) this.jump();
 			}
 
@@ -86,7 +97,7 @@ function Spyro(){
                     objSparx.gem = null;
 
                 objLevel.Gem[i].alive = false;
-                // TODO: increase gem count, remove gem from level object array
+                // TODO: increase gem count
             }
         }
 		
