@@ -77,8 +77,9 @@ function MainMenu(){
     
     // second page asking if you want to run small or big level
     page = new MenuPage();
-    page.addItem( "Small", 256-32, 256, function(){ objLevel = new PolygonLevel(levelString[1]); mainMenu.active = false; } );
-    page.addItem( "Big", 320+32, 256, function(){ objLevel = new PolygonLevel(levelString[0]); mainMenu.active = false; } );
+    page.addItem( "Small", 256-64, 256, function(){ objLevel = new PolygonLevel(levelString[1]); mainMenu.active = false; } );
+    page.addItem( "Big", 320, 256, function(){ objLevel = new PolygonLevel(levelString[0]); mainMenu.active = false; } );
+    page.addItem( "Yay", 320+64, 256, function(){ objLevel = new PolygonLevel(levelString[2]); mainMenu.active = false; } );
     this.pages.push( page );
     
     

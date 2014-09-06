@@ -1,4 +1,8 @@
 
+var SPYRO_FLAME_WIDTH = 128;
+var SPYRO_FLAME_HEIGHT = 64;
+var SPYRO_FLAME_SPEED = 8;
+
 function Spyro(){
     this.x = 100;
 	this.y = 100;
@@ -13,6 +17,7 @@ function Spyro(){
 	this.radius = 32;
 	this.acceleration = 3;
 	this.onGround = false;
+    this.flame = 0;
 	
 	this.jump = function(){
 	    this.yspeed -= 17;
@@ -20,7 +25,6 @@ function Spyro(){
 	}
 
 	this.step = function(){
-	
 		//Keyboard input and controls
 		
 		//Horizontal movement
@@ -35,7 +39,7 @@ function Spyro(){
 		}
 		
 		//Vertical movement
-		if( ! this.onGround ) // this should probably be changed slightly if/when we add slippery terrain
+        //if( ! this.onGround ) // this should probably be changed slightly if/when we add slippery terrain
 			this.yspeed += gravity;
 		
 		//Stop in mid-air when holding space
@@ -100,10 +104,45 @@ function Spyro(){
                 // TODO: increase gem count
             }
         }
+
+        this.updateFlame();
 		
 		this.frame += this.animSpeed;
 	}
+
+
+    this.updateFlame = function(){
+        if( this.flame > 0 || keyboard.isPressed(aKey) ){
+            if( this.flame < SPYRO_FLAME_WIDTH ){
+                this.flame += SPYRO_FLAME_SPEED;
+                // search for enemies to kill
+                for( var i = 0; i < objLevel.Enemy.length; i++ ){
+                    // there is horizontal line for collision
+                    var enemy = objLevel.Enemy[i];
+                    if( circleXline( enemy.x, enemy.y, enemy.r, this.flameX(), this.flameY0(), this.flameX(), this.flameY1() ) ){
+                        enemy.kill();
+                    }
+                }
+            } else this.flame = 0;
+        }
+    }
+
+
+    this.flameX = function(){
+        return this.x + this.facing * ( this.radius + this.flame );
+    }
+
+
+    this.flameY0 = function(){
+        return this.y - SPYRO_FLAME_HEIGHT / 2;
+    }
+
+
+    this.flameY1 = function(){
+        return this.y + SPYRO_FLAME_HEIGHT / 2;
+    }
 	
+
 	this.draw = function(){
         //Make Spyro draw himself
         drawSprite(context, this.sprite, this.frame, this.x, this.y, -this.facing, 1, this.rotation);
@@ -111,5 +150,15 @@ function Spyro(){
 		context.arc(this.x,this.y,32,0,2*Math.PI);
 		context.stroke();
 		this.sprite = sprSpyro;
+
+        // draw flame
+        if( this.flame > 0 ){
+            context.strokeStyle = "#FF4400";
+            context.lineWidth = 4;
+            context.beginPath();
+            context.moveTo( this.flameX(), this.flameY0() );
+            context.lineTo( this.flameX(), this.flameY1() );
+            context.stroke();
+        }
     }
 }

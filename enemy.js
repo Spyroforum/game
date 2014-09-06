@@ -10,8 +10,10 @@ function Enemy(){
 	this.maxXSpeed = 10;
 	this.acceleration = 1;
 	this.radius = 32;
+    this.alive = true;
 
 	this.step = function(){
+        if( !this.alive ) return;
 	    if( this.spyro != null ){
 		    if( this.x < this.spyro.x ) this.xspeed = speedUpPlus(this.xspeed, this.acceleration, this.maxXSpeed);
 		    if( this.x > this.spyro.x ) this.xspeed = speedUpMinus(this.xspeed, this.acceleration, -this.maxXSpeed);
@@ -44,8 +46,14 @@ function Enemy(){
 			}
 	    }
 	}
+
+    this.kill = function(){
+        this.alive = false;
+        // TODO: create gem
+    }
 	
 	this.draw = function(){
+        if( !this.alive ) return;
         drawSprite(context, this.sprite, 0, this.x, this.y, 1, 1, 0 );
 	}
 }
