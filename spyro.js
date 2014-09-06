@@ -2,6 +2,7 @@
 var SPYRO_FLAME_WIDTH = 128;
 var SPYRO_FLAME_HEIGHT = 64;
 var SPYRO_FLAME_SPEED = 8;
+var SPYRO_JUMP_SPEED = 18;
 
 function Spyro(){
     this.x = 100;
@@ -20,7 +21,9 @@ function Spyro(){
     this.flame = 0;
 	
 	this.jump = function(){
-	    this.yspeed -= 17;
+        // note: "-= speed" and "= -speed" makes a big difference for jumping
+        //       the first option makes spyro jump higher when he runs up steep cliff
+        this.yspeed -= SPYRO_JUMP_SPEED ;
 		audio.playSound(sndJump, 1, false);
 	}
 
@@ -100,8 +103,7 @@ function Spyro(){
                 if( objSparx.gem == objLevel.Gem[i] )
                     objSparx.gem = null;
 
-                objLevel.Gem[i].alive = false;
-                // TODO: increase gem count
+                objLevel.Gem[i].kill();
             }
         }
 

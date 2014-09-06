@@ -46,6 +46,12 @@ function Gem(){
     }
 
 
+    this.kill = function(){
+        this.alive = false;
+        // TODO: increase gem count
+    }
+
+
     this.draw = function(){
         if( this.alive == false || this.sprite == null ) return;
         drawSprite( context, this.sprite, 0, this.x, this.y, 1, 1, 0 );
