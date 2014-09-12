@@ -3,15 +3,15 @@
 var canvas = document.getElementById("gamecanvas"), context = canvas.getContext("2d");
 var gameLoop, screenWidth, screenHeight;
 var redraw = 0;
-var objTimer = null;
-var mainMenu = null;
 
 //Keyboard keys
 var leftKey, upKey, rightKey, downKey, aKey, sKey, rKey, xKey, yKey, cKey,
-        spaceKey, shiftKey, controlKey, returnKey;
-
+        spaceKey, shiftKey, controlKey, returnKey, escapeKey;
 
 //Objects
+var objTimer = null;
+var mainMenu = null;
+var pauseMenu = null;
 var objLevel = null;
 var objEditor = null;
 var objSpyro = null;
@@ -66,51 +66,61 @@ function gameInit(){
 	canvas.width = screenWidth;
 	canvas.height = screenHeight;
 	
-	//Add keyboard keys to "listen" for
-	leftKey = keyboard.addKey(37);
-	upKey = keyboard.addKey(38);
-    rightKey = keyboard.addKey(39);
-	downKey = keyboard.addKey(40);
-	spaceKey = keyboard.addKey(32);
-	shiftKey = keyboard.addKey(16);
-	controlKey = keyboard.addKey(17);
-	returnKey = keyboard.addKey(13);
-	aKey = keyboard.addKey(ord("A"));
-	sKey = keyboard.addKey(ord("S"));
-	rKey = keyboard.addKey(ord("R"));
-	xKey = keyboard.addKey(ord("X"));
-	yKey = keyboard.addKey(ord("Y"));
-	cKey = keyboard.addKey(ord("C"));
-	
-	objSparx = new Sparx();
-	objCamera = new Camera();
-	
-	//Add object types to the list of objects that can be loaded from a level string, and are place-able in the level editor
-	addObjectType("Spyro", true, true, sprSpyro, Spyro);//name, only one, must exist, sprite, constructor
-	var x = addObjectType("Enemy", false, false, sprEnemy, Enemy);
-	addObjectTypeProperty(x, "gemDrop", "The combined value of the gems the enemy should drop.", 5);//Default value is set to 5
-    //addObjectType("Gem", false, false, sprGemRed, Gem);
-	var x = addObjectType("Gem 1", false, false, sprGemRed, Gem);
-	addObjectTypeProperty(x, "value", "The value of the gem. (Should not be changed)", 1);
-	var x = addObjectType("Gem 2", false, false, sprGemGreen, Gem);
-	addObjectTypeProperty(x, "value", "The value of the gem( Should not be changed)", 2);
-	var x = addObjectType("Gem 5", false, false, sprGemBlue, Gem);
-	addObjectTypeProperty(x, "value", "The value of the gem( Should not be changed)", 5);
-	var x = addObjectType("Gem 10", false, false, sprGemYellow, Gem);
-	addObjectTypeProperty(x, "value", "The value of the gem( Should not be changed)", 10);
-	var x = addObjectType("Gem 25", false, false, sprGemPurple, Gem);
-	addObjectTypeProperty(x, "value", "The value of the gem( Should not be changed)", 25);
+    initKeyboard();
+    initObjectTypes();
+
+    objSparx = new Sparx();
+    objCamera = new Camera();
+    mainMenu = new MainMenu();
+    pauseMenu = new PauseMenu();
 	
 	//Start the game loop
-	mainMenu = new MainMenu();
 	objTimer = new Timer( 1000/30, gameStep, repaint );
 	gameLoop = this.setInterval( "objTimer.update()", 1 );
 }
 
 
-function repaint()
-{
-    redraw = 1;
+function initKeyboard(){
+    //Add keyboard keys to "listen" for
+    leftKey = keyboard.addKey(37);
+    upKey = keyboard.addKey(38);
+    rightKey = keyboard.addKey(39);
+    downKey = keyboard.addKey(40);
+    spaceKey = keyboard.addKey(32);
+    shiftKey = keyboard.addKey(16);
+    controlKey = keyboard.addKey(17);
+    returnKey = keyboard.addKey(13);
+    escapeKey = keyboard.addKey(27);
+    aKey = keyboard.addKey(ord("A"));
+    sKey = keyboard.addKey(ord("S"));
+    rKey = keyboard.addKey(ord("R"));
+    xKey = keyboard.addKey(ord("X"));
+    yKey = keyboard.addKey(ord("Y"));
+    cKey = keyboard.addKey(ord("C"));
+}
+
+
+function initObjectTypes(){
+    //Add object types to the list of objects that can be loaded from a level string, and are place-able in the level editor
+    addObjectType("Spyro", true, true, sprSpyro, Spyro);//name, only one, must exist, sprite, constructor
+    var x = addObjectType("Enemy", false, false, sprEnemy, Enemy);
+    addObjectTypeProperty(x, "gemDrop", "The combined value of the gems the enemy should drop.", 5);//Default value is set to 5
+    //addObjectType("Gem", false, false, sprGemRed, Gem);
+    x = addObjectType("Gem 1", false, false, sprGemRed, Gem);
+    addObjectTypeProperty(x, "value", "The value of the gem. (Should not be changed)", 1);
+    x = addObjectType("Gem 2", false, false, sprGemGreen, Gem);
+    addObjectTypeProperty(x, "value", "The value of the gem. (Should not be changed)", 2);
+    x = addObjectType("Gem 5", false, false, sprGemBlue, Gem);
+    addObjectTypeProperty(x, "value", "The value of the gem. (Should not be changed)", 5);
+    x = addObjectType("Gem 10", false, false, sprGemYellow, Gem);
+    addObjectTypeProperty(x, "value", "The value of the gem. (Should not be changed)", 10);
+    x = addObjectType("Gem 25", false, false, sprGemPurple, Gem);
+    addObjectTypeProperty(x, "value", "The value of the gem. (Should not be changed)", 25);
+}
+
+
+function repaint(){
+    redraw = true;
 }
 
 
@@ -118,16 +128,24 @@ function gameStep(){
 	if( resources.loaded ){
 	    if( mainMenu.active ){
 	        mainMenu.step();
-	    }
-		else if( objEditor == null ){
-			objLevel.step();
-			objCamera.step();
+        } else if( objEditor == null ){
+            if( pauseMenu.active ){
+                pauseMenu.step();
+            } else if( objLevel != null ) {
+                objLevel.step();
+                objCamera.step();
+
+                if( keyboard.isPressed( escapeKey ) ){
+                    pauseMenu.active = true;
+                }
+            }
 		} else {
 			objEditor.step();
 		}
 	} else {
 		resources.loadStep();
 	}
+
 	keyboard.update(); // Make keys go to the state of just being held or untouched after being pressed or released
 	mouse.update();
 
@@ -141,12 +159,13 @@ function gameDraw(){
             mainMenu.draw();
         }
 		else if( objEditor == null ){
-		    objLevel.draw();
+            objLevel.draw();
+            if( pauseMenu.active ) pauseMenu.draw();
 		} else {
 		    objEditor.draw();
 		}
     }
     
-    redraw = 0;
+    redraw = false;
 }
 

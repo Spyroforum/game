@@ -4,11 +4,8 @@ function Camera(){
 	this.target = null;
 
 	this.step = function(){
-		with(this)
-		{
-		    x = target.x - screenWidth / 2;
-			y = target.y - screenHeight / 2;
-		}
+        this.x = this.target.x - screenWidth / 2;
+        this.y = this.target.y - screenHeight / 2;
 	}
 	this.setView = function(context){
 		context.setTransform(1, 0, 0, 1, 0, 0);//Clear all previous transformation
