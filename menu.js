@@ -1,4 +1,8 @@
 
+var MENU_PAUSE_WIDTH = 128;
+var MENU_PAUSE_HEIGHT = 128;
+var MENU_PAUSE_BORDER_SIZE = 16;
+
 /**
     Parameters:
         label - text displayed on the item
@@ -19,6 +23,10 @@ function MenuItem( label, x, y, action ){
 }
 
 
+/**
+    Parameters:
+        keyboard keys for moving to the next and previous item
+*/
 function MenuPage( nextKey, previousKey ){
     this.items = new Array();
     this.current_item = 0;
@@ -140,13 +148,35 @@ function PauseMenu(){
 
     this.draw = function(){
         var old_alpha = context.globalAlpha;
+        var width = MENU_PAUSE_WIDTH;
+        var height = MENU_PAUSE_HEIGHT;
+        var x1 = (screenWidth - width) / 2;
+        var x2 = x1 + width;
+        var y1 = (screenHeight - height) / 2;
+        var y2 = y1 + height;
         context.setTransform( 1, 0, 0, 1, 0, 0 );
         context.fillStyle = '#000000';
         context.globalAlpha = 0.75;
-        context.fillRect( (screenWidth - 128) / 2, (screenHeight - 128) / 2, 128, 128 );
+        context.fillRect( x1, y1 - MENU_PAUSE_BORDER_SIZE, width, height + 2*MENU_PAUSE_BORDER_SIZE );
+
+        // draw border with rounded corners
+        this.drawCorner( x2, y1, 270, 0 ); // right top
+        this.drawCorner( x1, y1, 180, 270 ); // left top
+        this.drawCorner( x1, y2, 90, 180 ); // left bottom
+        this.drawCorner( x2, y2, 0, 90 ); // right bottom
+        context.fillRect( x1 - MENU_PAUSE_BORDER_SIZE, y1, MENU_PAUSE_BORDER_SIZE, height ); // left
+        context.fillRect( x2, y1, MENU_PAUSE_BORDER_SIZE, height ); // right
+
         context.globalAlpha = old_alpha;
 
         this.pages[ this.current_page ].draw();
+    }
+
+    this.drawCorner = function( x, y, a1, a2 ){
+        context.beginPath();
+        context.arc( x, y, MENU_PAUSE_BORDER_SIZE, a1*Math.PI / 180, a2*Math.PI / 180, false );
+        context.lineTo( x, y );
+        context.fill();
     }
 
     // create pages for pause menu:
