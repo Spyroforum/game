@@ -39,10 +39,10 @@ function Enemy(){
 			//Check if spyro is near
 			if( Math.abs( this.x - this.spyro.x ) < 128 && Math.abs( this.y - this.spyro.y ) < 128 ){
 				//Change spyro's sprite to being hurt, and play a "scary" sound
-				if( this.spyro.sprite != sprSpyroHurt ){
+				/*if( this.spyro.sprite != sprSpyroHurt ){
 					this.spyro.sprite = sprSpyroHurt;
 					audio.playSound(sndRumble, 1, false);
-				}
+				}*/
 			}
 	    }
 	}

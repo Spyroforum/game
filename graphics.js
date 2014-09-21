@@ -16,10 +16,10 @@
 */
 function drawSprite(context,spr,frame,x,y,xscale,yscale,angle){
 	context.translate(x, y);
-	context.rotate(angle * Math.PI / 180);
+	context.rotate( -angle * Math.PI / 180);
 	context.scale(xscale, yscale);
 	context.drawImage(spr.img, (Math.round(frame) % spr.frames) * spr.width, 0, spr.width, spr.height, -spr.originX, -spr.originY, spr.width, spr.height);
 	context.scale(1 / xscale, 1 / yscale);
-	context.rotate( -angle * Math.PI / 180);
+	context.rotate( angle * Math.PI / 180);
 	context.translate( -x, -y);
 }

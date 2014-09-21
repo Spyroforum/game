@@ -20,8 +20,15 @@ var objCamera = null;
 var gravity = 1.5;
 
 //Sprites
-var sprSpyro = resources.addSprite("graphics/sprSpyro.png", 2, 64, 64, 32, 32, 0);
-var sprSpyroHurt = resources.addSprite("graphics/sprSpyroHurt.png", 2, 64, 64, 32, 32, 0);
+var sprSpyroHurt = resources.addSprite("graphics/sprSpyroHurt.png", 2, 64, 64, 32, 32, 0);//old
+var sprSpyroJump = resources.addSprite("graphics/sprSpyroJump.png", 6, 118, 82, 63, 38, 0);
+var sprSpyroBreak = resources.addSprite("graphics/sprSpyroBreak.png", 4, 116, 68, 74, 34, 0);
+var sprSpyroIdle = resources.addSprite("graphics/sprSpyroIdle.png", 19, 105, 71, 67, 33, 0);
+var sprSpyroRun = resources.addSprite("graphics/sprSpyroRun.png", 5, 116, 63, 68, 31, 0);
+var sprSpyroGlide = resources.addSprite("graphics/sprSpyroGlide.png", 4, 139, 67, 68, 31, 0);
+var sprSpyroHover = resources.addSprite("graphics/sprSpyroHover.png", 4, 92, 92, 40, 48, 0);
+var sprSpyroFall = resources.addSprite("graphics/sprSpyroFall.png", 10, 132, 65, 68, 30, 0);
+
 var sprEnemy = resources.addSprite("graphics/sprEnemy.png", 1, 64, 64, 32, 32, 0);
 var sprSparx = resources.addSprite("graphics/sprSparx.png", 6, 32, 32, 16, 16, 0);
 var sprGemRed = resources.addSprite("graphics/sprGemRed.png", 1, 24, 24, 12, 12, 0);
@@ -102,7 +109,7 @@ function initKeyboard(){
 
 function initObjectTypes(){
     //Add object types to the list of objects that can be loaded from a level string, and are place-able in the level editor
-    addObjectType("Spyro", true, true, sprSpyro, Spyro);//name, only one, must exist, sprite, constructor
+    addObjectType("Spyro", true, true, sprSpyroIdle, Spyro);//name, only one, must exist, sprite, constructor
     var x = addObjectType("Enemy", false, false, sprEnemy, Enemy);
     addObjectTypeProperty(x, "gemDrop", "The combined value of the gems the enemy should drop.", 5);//Default value is set to 5
     //addObjectType("Gem", false, false, sprGemRed, Gem);

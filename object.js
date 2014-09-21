@@ -9,6 +9,14 @@ function objectDistance( obj1, obj2 ){
     return Math.sqrt( dx*dx + dy*dy );
 }
 
+/**
+	Returns the direction from obj1 to obje2 in degrees. (right = 0 degrees, up = 90 degrees and so on).
+    Object requirements:
+        x, y
+*/
+function objectDirection( obj1, obj2 ){
+	return (Math.atan2(obj1.y - obj2.y, -obj1.x + obj2.x)/ Math.PI * 180 + 360) % 360;
+}
 
 /**
     Object requirements:
@@ -81,6 +89,23 @@ function speedUpMinus(speed, acceleration, minimum){
 	
 	return speed;
 }
+
+/**
+    Returns the difference between the angles a1 and a2, from -180 to 180 degrees
+*/
+function angleDifference(a1, a2){
+	return ((((a2 - a1) % 360) + 540) % 360) - 180;
+}
+
+
+/**
+    Rotates the direction 'dir1' towards 'dir2', but not more than 'amount' degrees
+*/
+function rotateDirectionTowards(dir1, dir2, amount){
+	var angleDiff = angleDifference(dir1, dir2);//((((dir2 - dir1) % 360) + 540) % 360) - 180;
+    return (dir1 + Math.min(amount, Math.max(-amount, angleDiff)) + 360) % 360;
+}
+
 
 /*
 	Extract a list of array indexes of solid polygon lines touching the circle <x, y, radius> from the level's collision grid
@@ -169,6 +194,34 @@ function levelPartRemoveCircle(levelPart, x, y, radius){
 			l--;
 		}
 	}
+}
+
+/*
+	Get the nearest point of <levelPart>, as measured form <x, y>, (optionally) within the max distance <radius>.
+	If there is no point or the nearest point is outside the max distance
+*/
+function levelPartNearestPoint(levelPart, x, y, radius){
+	var point = null;
+	var sqrDist;
+	if( radius != null )
+		sqrDist = radius * radius;
+	else sqrDist = 99999999999999999;// really big number because within the game, this is as good as infinite
+
+	var l = levelPart.length;
+	for(var n = 0; n < l; n++){
+		var poly = objLevel.polygons[levelPart[n].polygonInd];
+		var p1 = poly.points[levelPart[n].pointInd];
+		var p2 = poly.points[(levelPart[n].pointInd + 1) % poly.points.length];
+		var p = nearestPointOnLine(x, y, 
+									p1.x + poly.position.x, p1.y + poly.position.y, 
+									p2.x + poly.position.x, p2.y + poly.position.y);
+		var sqrD = (x - p.x) * (x - p.x) + (y - p.y) * (y - p.y);
+		if( sqrD < sqrDist ){
+			sqrDist = sqrD;
+			point = p;
+		}
+	}
+	return point;
 }
 
 /*
