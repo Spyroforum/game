@@ -378,8 +378,6 @@ function Spyro(){
 			// Find the nearest solid point
 			var p = levelPartNearestPoint(nearLinesNotOverlapping, this.x, this.y, this.radius * 1.2);
 			if( p != null ){
-					this.nearestPoint.x = p.x
-					this.nearestPoint.y = p.y
 					// Align with the nearest solid point if this is within the slope angle limit
 					var targetRotation =  objectDirection( p, this ) - 90;
 					if( Math.abs(targetRotation) < SPYRO_SLOPE_ANGLE_LIMIT ){
