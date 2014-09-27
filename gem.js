@@ -1,8 +1,10 @@
 
+var GEM_RADIUS = 12;
+
 function Gem(){
     this.x = 0;
     this.y = 0;
-    this.radius = 12;
+    this.radius = GEM_RADIUS;
     this.xspeed = 0;
     this.yspeed = 0;
     this.spyro = null;

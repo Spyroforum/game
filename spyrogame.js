@@ -138,10 +138,8 @@ function gameStep(){
         } else if( objEditor == null ){
             if( pauseMenu.active ){
                 pauseMenu.step();
-            } else if( objLevel != null ) {
+            } else if( objLevel != null ){
                 objLevel.step();
-                objCamera.step();
-
                 if( keyboard.isPressed( escapeKey ) ){
                     pauseMenu.active = true;
                 }
@@ -149,6 +147,7 @@ function gameStep(){
 		} else {
 			objEditor.step();
 		}
+        objCamera.step();
 	} else {
 		resources.loadStep();
 	}
@@ -171,6 +170,7 @@ function gameDraw(){
 		} else {
 		    objEditor.draw();
 		}
+        objCamera.draw();
     }
     
     redraw = false;

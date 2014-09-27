@@ -49,7 +49,7 @@ function Enemy(){
 
     this.kill = function(){
         this.alive = false;
-        // TODO: create gem
+        objLevel.addGem(this.x, this.y, 0, -10, 5); // TODO: gem drop depends on enemy?
     }
 	
 	this.draw = function(){

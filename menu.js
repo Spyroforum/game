@@ -116,9 +116,9 @@ function MainMenu(){
 
     // second page asking if you want to run small or big level
     page = new MenuPage( rightKey, leftKey );
-    page.addItem( "Small", screenWidth / 2 - 96, 256, function(){ objLevel = new PolygonLevel(levelString[1]); mainMenu.active = false; } );
-    page.addItem( "Big", screenWidth / 2, 256, function(){ objLevel = new PolygonLevel(levelString[0]); mainMenu.active = false; } );
-    page.addItem( "Yay", screenWidth / 2 + 96, 256, function(){ objLevel = new PolygonLevel(levelString[2]); mainMenu.active = false; } );
+    page.addItem( "Small", screenWidth / 2 - 96, 256, function(){ changeLevel(1); } );
+    page.addItem( "Big", screenWidth / 2, 256, function(){ changeLevel(0) } );
+    page.addItem( "Yay", screenWidth / 2 + 96, 256, function(){ changeLevel(2) } );
     this.pages.push( page );
 }
 
@@ -183,6 +183,23 @@ function PauseMenu(){
     // only first page at the moment
     var page = new MenuPage( downKey, upKey );
     page.addItem( "Continue", screenWidth / 2, screenHeight / 2 - 32, function(){ pauseMenu.restart(); } );
-    page.addItem( "Main menu", screenWidth / 2, screenHeight / 2, function(){ objLevel = null; pauseMenu.restart(); mainMenu.restart(); } );
+    page.addItem( "Main menu", screenWidth / 2, screenHeight / 2, goToMainMenu );
     this.pages.push( page );
+}
+
+
+function goToMainMenu(){
+    objCamera.fadeOut( function(){
+        objLevel = null;
+        pauseMenu.restart();
+        mainMenu.restart();;
+    });
+}
+
+
+function changeLevel(id){
+    objCamera.fadeOut( function(){
+        objLevel = new PolygonLevel(levelString[id]);
+        mainMenu.active = false;
+    });
 }

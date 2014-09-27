@@ -344,7 +344,31 @@ function PolygonLevel( str ){
 			ind = str.indexOf("@", ind);
 		}
 	}
+
+    this.addGem = function(x, y, xspeed, yspeed, value){
+        var gem = new Gem();
+        gem.x = x;
+        gem.y = y;
+        gem.xspeed = xspeed;
+        gem.yspeed = yspeed;
+        gem.value = value;
+
+        if( gem.value == 1 )
+            gem.sprite = sprGemRed;
+        else if( gem.value == 2 )
+            gem.sprite = sprGemGreen;
+        else if( gem.value == 5 )
+            gem.sprite = sprGemBlue;
+        else if( gem.value == 10 )
+            gem.sprite = sprGemYellow;
+        else if( gem.value == 25 )
+            gem.sprite = sprGemPurple;
+
+        this.objects.push(gem);
+        this.Gem.push(gem);
+    }
 	
 	this.loadString(str);
 	this.init();
+    objCamera.fadeIn();
 }

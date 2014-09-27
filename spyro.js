@@ -247,7 +247,15 @@ function Spyro(){
 			if( this.onGround && ! this.falling )
 				this.whileOnGround();
 
-		// search for gems to pick
+        this.pickGems();
+        this.updateFlame();
+	}
+
+
+    /**
+        Loops through all gem objects and kills those which collide with Spyro.
+    */
+    this.pickGems = function(){
         for( var i = 0; i < objLevel.Gem.length; i++ ){
             if( objectCollide( this, objLevel.Gem[i] ) ){
                 // fix if spyro collected the gem faster than sparx
@@ -257,9 +265,7 @@ function Spyro(){
                 objLevel.Gem[i].kill();
             }
         }
-
-        this.updateFlame();
-	}
+    }
 
 
     this.updateFlame = function(){
