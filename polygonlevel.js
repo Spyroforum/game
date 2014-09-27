@@ -370,5 +370,4 @@ function PolygonLevel( str ){
 	
 	this.loadString(str);
 	this.init();
-    objCamera.fadeIn();
 }
