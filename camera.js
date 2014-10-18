@@ -17,7 +17,6 @@ function Camera(){
         }
 
         // update fade out/in
-        document.getElementById("deb").innerHTML = this.fadeAlpha;
         if(this.fadeSpeed > 0){ // fade out
             if(this.fadeAlpha >= 1){
                 if(this.fadeOutEvent != null) this.fadeOutEvent();

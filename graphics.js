@@ -23,3 +23,37 @@ function drawSprite(context,spr,frame,x,y,xscale,yscale,angle){
 	context.rotate( angle * Math.PI / 180);
 	context.translate( -x, -y);
 }
+
+
+/*
+    Simplified version of function above.
+*/
+function drawSpriteSimple(context, spr, frame, x, y){
+    context.translate(x, y);
+    context.drawImage(spr.img, (Math.round(frame) % spr.frames) * spr.width, 0, spr.width, spr.height, -spr.originX, -spr.originY, spr.width, spr.height);
+    context.translate( -x, -y);
+}
+
+
+function Animation(sprite){
+    this.sprite = sprite;
+    this.frame = 0
+
+    this.draw = function(x, y){
+        drawSpriteSimple(context, this.sprite, this.frame, x, y);
+    }
+
+    this.drawExt = function(x, y, xscale, yscale, angle){
+        drawSprite(context, this.sprite, this.frame, x, y, xscale, yscale, angle);
+    }
+
+    this.frameCount = function(){
+        return this.sprite.frames;
+    }
+
+    this.nextFrame = function(){
+        this.frame++;
+        if(this.frame >= this.frameCount())
+            this.frame = 0;
+    }
+}

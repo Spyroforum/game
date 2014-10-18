@@ -497,3 +497,40 @@ function objectXlevelCollision( object )
 	
 	return isCollision;
 }
+
+
+/*
+    Chcks if given object collides with spyro's flame.
+
+    Object requirements:
+        x, y, radius
+*/
+function isFlamed(object){
+    // exit if no spyro or flame
+    if(objSpyro == null) return false;
+    if(objSpyro.flame < 1) return false;
+    if(circleXline(object.x, object.y, object.radius, objSpyro.flameX(), objSpyro.flameY0(), objSpyro.flameX(), objSpyro.flameY1())){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+/*
+    Chcks if given object collides with spyro while he's charging.
+
+    Object requirements:
+        x, y, radius
+*/
+function isCharged(object){
+    // exit if no spyro or flame
+    /*if(objSpyro == null) return false;
+    if(objSpyro.???) return false; // TODO
+    if(collision ???){ // TODO
+        return true;
+    } else {
+        return false;
+    }*/
+    return false; // DELETE ME
+}

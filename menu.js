@@ -84,7 +84,7 @@ function MenuPage( nextKey, previousKey ){
 function MainMenu(){
     // variables:
     this.active = true;
-    this.pages = new Array();
+    this.pages = [];
     this.current_page = 0;
 
     // functions:
@@ -126,7 +126,7 @@ function MainMenu(){
 function PauseMenu(){
     // variables:
     this.active = false;
-    this.pages = new Array();
+    this.pages = [];
     this.current_page = 0;
 
     // functions:

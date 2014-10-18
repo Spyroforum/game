@@ -247,39 +247,14 @@ function Spyro(){
 			if( this.onGround && ! this.falling )
 				this.whileOnGround();
 
-        this.pickGems();
         this.updateFlame();
 	}
-
-
-    /**
-        Loops through all gem objects and kills those which collide with Spyro.
-    */
-    this.pickGems = function(){
-        for( var i = 0; i < objLevel.Gem.length; i++ ){
-            if( objectCollide( this, objLevel.Gem[i] ) ){
-                // fix if spyro collected the gem faster than sparx
-                if( objSparx.gem == objLevel.Gem[i] )
-                    objSparx.gem = null;
-
-                objLevel.Gem[i].kill();
-            }
-        }
-    }
 
 
     this.updateFlame = function(){
         if( this.flame > 0 || keyboard.isPressed(aKey) ){
             if( this.flame < SPYRO_FLAME_WIDTH ){
                 this.flame += SPYRO_FLAME_SPEED;
-                // search for enemies to kill
-                for( var i = 0; i < objLevel.Enemy.length; i++ ){
-                    // there is horizontal line for collision
-                    var enemy = objLevel.Enemy[i];
-                    if( circleXline( enemy.x, enemy.y, enemy.r, this.flameX(), this.flameY0(), this.flameX(), this.flameY1() ) ){
-                        enemy.kill();
-                    }
-                }
             } else this.flame = 0;
         }
     }

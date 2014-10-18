@@ -99,45 +99,29 @@ function PolygonLevel( str ){
 		//Do stuff in addition to loading the contents of a level.
 
 		//Make all polygons calculate their bounding boxes
-		var l = this.polygons.length;
+        var l = this.polygons.length;
 		for(var n = 0; n < l; n++){
 			this.polygons[n].calculateBoundingBox();
-			this.polygons[n].calculateGraphicalBoundingBox();
-		}
-		//Generate collision grid
-		this.generateCollisionGrid(200);//cell size of 200 * 200 px
+            this.polygons[n].calculateGraphicalBoundingBox();
+        }
+        //Generate collision grid
+        this.generateCollisionGrid(200);//cell size of 200 * 200 px
 		
 		objSpyro = this.Spyro[0];
 		
 		objCamera.target = objSpyro;
 		
-		//Create sparx and tell him what object is Spyro
-		objSparx.spyro = objSpyro;
 		this.objects.push(objSparx);
-		
-		//Tell all enemies what object is Spyro
-		for(var n = 0; n < this.Enemy.length; n++){
-			this.Enemy[n].spyro = objSpyro;
-		}
-		
-		//Make all gems set their sprite depending on their value
-		for(var n = 0; n < this.Gem.length; n++){
-			var val = this.Gem[n].value;
-			if( val == 1 )
-				this.Gem[n].sprite = sprGemRed;
-			else if( val == 2 )
-				this.Gem[n].sprite = sprGemGreen;
-			else if( val == 5 )
-				this.Gem[n].sprite = sprGemBlue;
-			else if( val == 10 )
-				this.Gem[n].sprite = sprGemYellow;
-			else if( val == 25 )
-				this.Gem[n].sprite = sprGemPurple;
-		}
+
+        // For each object, call its init function if it has any.
+        for(var i = 0; i < this.objects.length; i++){
+            if( typeof this.objects[i].init !== "undefined" ){
+                this.objects[i].init();
+            }
+        }
 	}
 	
 	this.step = function(){
-		
 		//Make all objects in the level run their step function
 		var l = this.objects.length;
 		for(var n = 0; n < l; n++){
@@ -341,29 +325,21 @@ function PolygonLevel( str ){
 					ind = str.indexOf("£", ind) + 1;
 				}				
 			}
+
 			ind = str.indexOf("@", ind);
 		}
 	}
 
-    this.addGem = function(x, y, xspeed, yspeed, value){
+    this.addGem = function(x, y, xspeed, yspeed, value, picked){
         var gem = new Gem();
         gem.x = x;
         gem.y = y;
         gem.xspeed = xspeed;
         gem.yspeed = yspeed;
         gem.value = value;
+        gem.picked = picked;
 
-        if( gem.value == 1 )
-            gem.sprite = sprGemRed;
-        else if( gem.value == 2 )
-            gem.sprite = sprGemGreen;
-        else if( gem.value == 5 )
-            gem.sprite = sprGemBlue;
-        else if( gem.value == 10 )
-            gem.sprite = sprGemYellow;
-        else if( gem.value == 25 )
-            gem.sprite = sprGemPurple;
-
+        gem.init();
         this.objects.push(gem);
         this.Gem.push(gem);
     }
