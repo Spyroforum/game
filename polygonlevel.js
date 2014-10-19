@@ -343,6 +343,10 @@ function PolygonLevel( str ){
         this.objects.push(gem);
         this.Gem.push(gem);
     }
+
+    this.addButterfly = function(x, y, type){
+        // TODO
+    }
 	
 	this.loadString(str);
 	this.init();

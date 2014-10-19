@@ -1,0 +1,3 @@
+
+var BUTTERFLY_HEALTH = 0;
+var BUTTERFLY_LIFE = 1;
