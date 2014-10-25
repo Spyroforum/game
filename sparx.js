@@ -10,15 +10,10 @@ function Sparx(){
     this.y = 0;
     this.rdx = 0;
     this.rdy = 0;
-    this.spyro = null;
     this.gem = null;
     this.timer = 100;
-    this.sprite = new Animation(sprSparx);
+    this.sprite = new Animation(sprSparx, ANIMATION_LOOP_MOVE);
     this.radius = 16;
-
-    this.init = function(){
-        this.spyro = objSpyro;
-    }
 
     this.step = function(){
         // move sparx to random location around spyro
@@ -36,15 +31,14 @@ function Sparx(){
             this.x += (this.gem.x - this.x) * 0.25;
             this.y += (this.gem.y - this.y) * 0.25;
             if( objectCollide( this.gem, this ) ){
-                this.gem.picked = true; // tell gem that it should move to spyro
-                this.gem.yspeed = -10; // jump a little bit
+                this.gem.pick();
                 this.gem = null; // tell sparx to follow spyro again
             }
         } else {
             // move sparx to spyro
-            if( this.spyro != null ){
-                this.x += (this.spyro.x + this.rdx - this.x) * 0.2;
-                this.y += (this.spyro.y + this.rdy - this.y) * 0.2;
+            if( objSpyro != null ){
+                this.x += (objSpyro.x + this.rdx - this.x) * 0.2;
+                this.y += (objSpyro.y + this.rdy - this.y) * 0.2;
             }
         }
 
@@ -52,6 +46,6 @@ function Sparx(){
     }
 
     this.draw = function(){
-        this.sprite.drawExt(this.x, this.y, -this.spyro.facing, 1, 0);
+        this.sprite.drawExt(this.x, this.y, -objSpyro.facing, 1, 0);
     }
 }

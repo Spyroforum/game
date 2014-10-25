@@ -338,14 +338,19 @@ function PolygonLevel( str ){
         gem.yspeed = yspeed;
         gem.value = value;
         gem.picked = picked;
-
         gem.init();
         this.objects.push(gem);
         this.Gem.push(gem);
     }
 
     this.addButterfly = function(x, y, type){
-        // TODO
+        var butt = new Butterfly();
+        butt.x = x;
+        butt.y = y;
+        butt.type = type;
+        butt.init();
+        this.objects.push(butt);
+        this.Butterfly.push(butt);
     }
 	
 	this.loadString(str);

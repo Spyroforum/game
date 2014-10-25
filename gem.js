@@ -1,5 +1,6 @@
 
 var GEM_RADIUS = 12;
+var GEM_PICK_SPEED = -10;
 
 function Gem(){
     this.x = 0;
@@ -81,6 +82,12 @@ function Gem(){
         if( objSparx.gem == this ) objSparx.gem = null;
         this.alive = false;
         // TODO: increase gem count
+    }
+
+
+    this.pick = function(){
+        this.picked = true;
+        this.yspeed = GEM_PICK_SPEED;
     }
 
 

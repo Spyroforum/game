@@ -29,7 +29,7 @@ var sprSpyroHover = resources.addSprite("graphics/sprSpyroHover.png", 4, 92, 92,
 var sprSpyroFall = resources.addSprite("graphics/sprSpyroFall.png", 10, 132, 65, 68, 30, 0);
 
 var sprEnemy = resources.addSprite("graphics/sprEnemy.png", 1, 64, 64, 32, 32, 0);
-var sprSparx = resources.addSprite("graphics/sprSparx.png", 6, 32, 32, 16, 16, 0);
+var sprSparx = resources.addSprite("graphics/sprSparx.png", 4, 32, 32, 16, 16, 0);
 var sprGemRed = resources.addSprite("graphics/sprGemRed.png", 1, 24, 24, 12, 12, 0);
 var sprGemGreen = resources.addSprite("graphics/sprGemGreen.png", 1, 24, 24, 12, 12, 0);
 var sprGemBlue = resources.addSprite("graphics/sprGemBlue.png", 1, 24, 24, 12, 12, 0);
@@ -39,6 +39,9 @@ var sprGemPurple = resources.addSprite("graphics/sprGemPurple.png", 1, 24, 24, 1
 var sprChestBasket = resources.addSprite("graphics/sprChestBasket.png", 1, 64, 48, 32, 24, 0);
 var sprChestVase = resources.addSprite("graphics/sprChestVase.png", 6, 32, 64, 16, 32, 0);
 var sprChestLife = resources.addSprite("graphics/sprChestLife.png", 1, 64, 64, 32, 32, 0);
+
+var sprButterflyHealth = resources.addSprite("graphics/sprButterflyHealth.png", 6, 32, 32, 16, 16, 0);
+var sprButterflyLife = resources.addSprite("graphics/sprButterflyLife.png", 6, 32, 32, 16, 16, 0);
 
 //Sounds
 var sndRumble = resources.addSound("sounds/rumble.ogg");
@@ -130,6 +133,10 @@ function initObjectTypes(){
     x = addObjectType("ChestVase", false, false, sprChestVase, ChestVase);
     addObjectTypeProperty(x, "gemDrop", "The combined value of the gems the chest should drop.", 5);
     x = addObjectType("ChestLife", false, false, sprChestLife, ChestLife);
+    x = addObjectType("Butterfly health", false, false, sprButterflyHealth, Butterfly);
+    addObjectTypeProperty(x, "type", "Butterfly type (Should not be changed)", BUTTERFLY_HEALTH);
+    x = addObjectType("Butterfly life", false, false, sprButterflyLife, Butterfly);
+    addObjectTypeProperty(x, "type", "Butterfly type (Should not be changed)", BUTTERFLY_LIFE);
 }
 
 

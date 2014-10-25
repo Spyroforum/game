@@ -19,7 +19,6 @@ function ChestBasket(){
         }
     }
 
-
     this.draw = function(){
         if(!this.alive) return;
         this.sprite.draw(this.x, this.y);
@@ -33,7 +32,6 @@ function ChestVase(){
     this.sprite = new Animation(sprChestVase);
     this.gemDrop = 1;
     this.hot = 0;
-
 
     this.step = function(){
         if(!this.alive) return;
@@ -52,7 +50,6 @@ function ChestVase(){
         }
     }
 
-
     this.draw = function(){
         if(!this.alive) return;
 
@@ -69,6 +66,7 @@ function ChestLife(){
     this.radius = 32;
     this.alive = true;
     this.sprite = new Animation(sprChestLife);
+    this.spriteB = new Animation(sprButterflyLife, ANIMATION_LOOP_MOVE);
 
     this.step = function(){
         if(!this.alive) return;
@@ -77,9 +75,12 @@ function ChestLife(){
             objLevel.addButterfly(this.x, this.y, BUTTERFLY_LIFE);
             this.alive = false;
         }
+
+        this.spriteB.nextFrame();
     }
 
     this.draw = function(){
+        this.spriteB.draw(this.x, this.y + 16);
         this.sprite.draw(this.x, this.y);
     }
 }
