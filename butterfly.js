@@ -30,6 +30,8 @@ function Butterfly(){
     }
 
     this.step = function(){
+        if(!this.alive) return;
+
         // change position delta and facing
         this.pdx = this.dx;
         this.pdy = this.dy;
@@ -41,14 +43,6 @@ function Butterfly(){
             this.facing = -1;
         else
             this.facing = 1;
-
-        // If Sparx is not hunting any butterfly and sees this one
-        if( objSparx.butterfly == null ){
-            if( objectCollideDistance( this, objSpyro, SPARX_SIGHT ) ){
-                objSparx.butterfly = this;
-                this.run();
-            }
-        }
 
         this.sprite.nextFrame();
     }
@@ -70,6 +64,7 @@ function Butterfly(){
     }
 
     this.draw = function(){
+        if(!this.alive) return;
         this.sprite.drawExt(this.x + this.dx, this.y + this.dy, this.facing, 1, 0);
     }
 }

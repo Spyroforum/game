@@ -71,6 +71,10 @@ levelString[2] = "@Polygon{x:177£y:288£jumpThrough:false£visible:true£bgColo
 gameInit();
 
 
+function debug(message){
+    document.getElementById("debug").innerHTML = message;
+}
+
 //Below here are the game functions:
 function gameInit(){
 	//Set the game screen size

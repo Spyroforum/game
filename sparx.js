@@ -22,11 +22,44 @@ function Sparx(){
 
     this.step = function(){
         // move sparx closer to butterfly, gem or spyro
-        if(this.butterfly != null) this.moveToButterfly();
-        else if(this.gem != null) this.moveToGem();
-        else if(objSpyro != null) this.moveToSpyro();
+        if(this.butterfly !== null) this.moveToButterfly();
+        else if(this.gem !== null) this.moveToGem();
+        else if(objSpyro !== null){
+            this.moveToSpyro();
+            if(!this.searchButterflies())
+                this.searchGems();
+        }
 
         this.sprite.nextFrame();
+    }
+
+    this.searchGems = function(){
+        var gem, i;
+        for(i = 0; i < objLevel.Gem.length; i++){
+            gem = objLevel.Gem[i];
+            if(!gem.alive || gem.picked) continue;
+            if(objectCollideDistance(gem, objSpyro, SPARX_SIGHT)){
+                this.gem = gem;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    this.searchButterflies = function(){
+        var butt, i;
+        for(i = 0; i < objLevel.Butterfly.length; i++){
+            butt = objLevel.Butterfly[i];
+            if(!butt.alive) continue;
+            if(objectCollideDistance(butt, objSpyro, SPARX_SIGHT)){
+                butt.run();
+                this.butterfly = butt;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     this.moveToButterfly = function(){
@@ -40,10 +73,8 @@ function Sparx(){
 
         // takes some time to hunt down the butterfly
         if(this.hTimer.tick()){
-            if( objectCollide( this.butterfly, this ) ){
-                this.butterfly.kill();
-                this.butterfly = null;
-            }
+            this.butterfly.kill();
+            this.butterfly = null;
         }
     }
 

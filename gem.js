@@ -45,13 +45,6 @@ function Gem(){
             // increase move speed so spyro can't run away from the gem
             this.sspeed = speedUpPlus( this.sspeed, 0.02, 1 );
         } else {
-            // If Sparx is not seeking any gem and sees this gem
-            if( objSparx.gem == null ){
-                if( objectCollideDistance( this, objSpyro, SPARX_SIGHT ) ){
-                    objSparx.gem = this;
-                }
-            }
-
             if( ! this.settled ){
                 this.yspeed += gravity;
 
