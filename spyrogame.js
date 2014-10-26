@@ -37,7 +37,7 @@ var sprGemYellow = resources.addSprite("graphics/sprGemYellow.png", 1, 24, 24, 1
 var sprGemPurple = resources.addSprite("graphics/sprGemPurple.png", 1, 24, 24, 12, 12, 0);
 
 var sprChestBasket = resources.addSprite("graphics/sprChestBasket.png", 1, 64, 48, 32, 24, 0);
-var sprChestVase = resources.addSprite("graphics/sprChestVase.png", 6, 32, 64, 16, 32, 0);
+var sprChestVase = resources.addSprite("graphics/sprChestVase.png", 6, 26, 40, 12, 10, 0);
 var sprChestLife = resources.addSprite("graphics/sprChestLife.png", 1, 64, 64, 32, 32, 0);
 
 var sprButterflyHealth = resources.addSprite("graphics/sprButterflyHealth.png", 6, 32, 32, 16, 16, 0);
@@ -88,7 +88,7 @@ function gameInit(){
     pauseMenu = new PauseMenu();
 	
 	//Start the game loop
-	objTimer = new Timer( 1000/30, gameStep, repaint );
+    objTimer = new MainTimer( 1000/30, gameStep, repaint );
 	gameLoop = this.setInterval( "objTimer.update()", 1 );
 }
 

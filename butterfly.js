@@ -13,10 +13,14 @@ function Butterfly(){
     this.dy = 0;
     this.ax = 0; // angles for computing position delta
     this.ay = 0;
+    this.pdx = 0; // previous dx/dy (used for sparx)
+    this.pdy = 0;
     this.radius = 16;
     this.sprite = null;
     this.type = BUTTERFLY_HEALTH;
+    this.runMult = 1;
     this.facing = 1;
+    this.alive = true;
 
     this.init = function(){
         if(this.type == BUTTERFLY_HEALTH)
@@ -27,8 +31,10 @@ function Butterfly(){
 
     this.step = function(){
         // change position delta and facing
-        this.ax = (this.ax + 4) % 360;
-        this.ay = (this.ay + 2) % 360;
+        this.pdx = this.dx;
+        this.pdy = this.dy;
+        this.ax = (this.ax + BUTTERFLY_AX_SPEED * this.runMult) % 360;
+        this.ay = (this.ay + BUTTERFLY_AY_SPEED) % 360;
         this.dx = BUTTERFLY_DX_SIZE * Math.sin(this.ax * Math.PI / 180);
         this.dy = BUTTERFLY_DY_SIZE * Math.sin(this.ay * Math.PI / 180);
         if(this.ax <= 90 || this.ax > 270 )
@@ -36,7 +42,31 @@ function Butterfly(){
         else
             this.facing = 1;
 
+        // If Sparx is not hunting any butterfly and sees this one
+        if( objSparx.butterfly == null ){
+            if( objectCollideDistance( this, objSpyro, SPARX_SIGHT ) ){
+                objSparx.butterfly = this;
+                this.run();
+            }
+        }
+
         this.sprite.nextFrame();
+    }
+
+    this.run = function(){
+        this.runMult = 2;
+    }
+
+    this.kill = function(){
+        objSparx.notifyButterflyKilled(this);
+
+        if(this.type == BUTTERFLY_HEALTH){
+            // TODO: increase spyro's health
+        } else {
+            // TODO: increase spyro's life
+        }
+
+        this.alive = false;
     }
 
     this.draw = function(){

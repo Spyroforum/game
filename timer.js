@@ -1,4 +1,52 @@
 
+/*
+    Paramaters:
+        time - the number of ticks until event function is called
+*/
+function Timer(time){
+    this.tTicks = time; // target number of ticks
+    this.cTicks = 0; // current number of ticks
+
+
+    /*
+        Increases cTicks by one.
+        If cTicks is greater or equal tTicks, then event function is called.
+        (the default event function is reset)
+
+        Returns:
+            true - if event function called
+            false - otherwise
+    */
+    this.tick = function(){
+        if(this.cTicks >= this.tTicks){
+            this.event();
+            return true;
+        } else {
+            this.cTicks++;
+            return false;
+        }
+    }
+
+
+    /*
+        Sets number of ticks to zero.
+
+        Parameters:
+            ntime (int) [optional] - new nmber of ticks until calling event function
+    */
+    this.reset = function(ntime){
+        if(typeof ntime !== "undefined"){
+            this.tTicks = ntime;
+        }
+
+        this.cTicks = 0;
+    }
+
+    this.event = this.reset;
+}
+
+
+
 function SubTimer(delay){
     this.old = Date.now(); // time in milis of last update
     this.stack = 0; // every update is raised by current and old time difference
@@ -49,8 +97,7 @@ function SubTimer(delay){
 }
 
 
-
-function Timer( delay, fstep, fdraw ){
+function MainTimer( delay, fstep, fdraw ){
     this.step_timer = new SubTimer(delay);
     this.draw_timer = new SubTimer(delay);
     this.step_function = fstep; // function to be called every step

@@ -79,9 +79,9 @@ function Gem(){
 
 
     this.kill = function(){
-        if( objSparx.gem == this ) objSparx.gem = null;
-        this.alive = false;
         // TODO: increase gem count
+        objSparx.notifyGemKilled(this);
+        this.alive = false;
     }
 
 
