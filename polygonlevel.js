@@ -3,6 +3,7 @@ function PolygonLevel( str ){
 	this.polygons = [];
 	this.objects = [];
 	this.collisionGrid = null;
+	this.id = null;
 	
 	//Generate a collision grid, a rectangle covering all solid lines of polygons, split into smaller cells containing references to overlapping solid polygon lines
 	//Each cell will contain an array. Each of those arrays(if there are any solid lines touching the cell), will consist of objects with a polygonInd property and a pointInd property
@@ -108,7 +109,6 @@ function PolygonLevel( str ){
         this.generateCollisionGrid(200);//cell size of 200 * 200 px
 		
 		objSpyro = this.Spyro[0];
-		
 		objCamera.target = objSpyro;
 		
 		this.objects.push(objSparx);
@@ -157,6 +157,10 @@ function PolygonLevel( str ){
 			context.setTransform(1, 0, 0, 1, 0, 0);
 			context.fillStyle = 'rgb(185, 140, 170)';
 			context.fillRect(0, 0, screenWidth, screenHeight);
+			if( this.id != null )
+				if( sprSky[this.id] != null )
+					drawSprite(context,sprSky[this.id], 0, -objCamera.x*0.1-200, -objCamera.y*0.1-100, 1, 1, 0)
+			
 			objCamera.setView(context);
 		
 			context.save();

@@ -200,6 +200,7 @@ function goToMainMenu(){
 function changeLevel(id){
     objCamera.fadeOut( function(){
         objLevel = new PolygonLevel(levelString[id]);
+		objLevel.id = id;
         mainMenu.active = false;
     });
 }

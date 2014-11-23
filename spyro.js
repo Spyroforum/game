@@ -193,6 +193,9 @@ function Spyro(){
 			this.yspeed = 0;
 		}
 		
+		//Collide with chests, and possibly other objects later
+		chestCollision(this);
+		
 		// Movement and collision with terrain
 			var speed = Math.sqrt(this.xspeed * this.xspeed + this.yspeed * this.yspeed);
 			// Extract a list of all lines within a (2 * radius + speed) distance from Spyro, because these are the only ones he could possibly collide with
@@ -249,7 +252,6 @@ function Spyro(){
 
         this.updateFlame();
 	}
-
 
     this.updateFlame = function(){
         if( this.flame > 0 || keyboard.isPressed(aKey) ){

@@ -534,3 +534,47 @@ function isCharged(object){
     }*/
     return false; // DELETE ME
 }
+
+/*
+    Check for and react to collision with all chest objects
+
+    Object requirements:
+        x, y, radius, xspeed, yspeed
+*/
+function chestCollision(object){
+
+	if( objLevel == null ) return false;
+	
+	var otype = [];
+	otype[0] = objLevel.ChestBasket;
+	otype[1] = objLevel.ChestVase;
+	otype[2] = objLevel.ChestLife;
+	var n, i, chest;
+	// loop through all chest objects
+	for(n = 0; n < otype.length; n++){
+		for(i = 0; i < otype[n].length; i++){
+			chest = otype[n][i];
+			var xx, yy, d, r, m;
+			xx = object.x + object.xspeed - chest.x;
+			yy = object.y + object.yspeed - chest.y;
+			d = Math.sqrt(xx*xx+yy*yy);
+			r = chest.radius + object.radius;
+			// test if there is a collision between the object and the current chest
+			if( d < r ){
+				// react to that collision
+				if( ! object.onGround ){
+					// move the object's target destination (x+xspeed, y+yspeed) out of the chest
+					m = (r - d) / r;
+					object.xspeed += xx * m;
+					object.yspeed += yy * m;
+				} else {
+					// do the same, but change xspeed only
+					var r = Math.sqrt(r * r - yy * yy);
+					d = Math.abs(xx)
+					m = (r - d) / r;
+					object.xspeed += xx * m;
+				}
+			}
+		}
+	}
+}
