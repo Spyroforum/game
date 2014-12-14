@@ -52,7 +52,7 @@ resources.loadStep = function(){
 **	Loads a sprite from a sprite strip image
 **
 **	Parameters:
-**		<source> - the image url to load from
+**		<source> - the image file name
 **		<frames> - the number of frames in the animation
 **		<width> - the width of a single sprite frame of the strip
 **		<height> - the height of the sprite
@@ -73,7 +73,7 @@ resources.addSprite = function(source,frames,width,height,originx,originy,sep){
 		originY: originy,
 		sep: sep
 	};
-	sprite.img.src = source;
+    sprite.img.src = "../resources/graphics/sprites/" + source;
 	
 	resources.sprites.push(sprite);
 	resources.numResources++;
@@ -90,7 +90,7 @@ resources.addSound = function(source){
 	var sound = {
 		element: element
 	};
-	element.src = source;
+    element.src = "../resources/sounds/" + source;
 	element.autoplay = false;
 	document.body.appendChild(element);
 	element.load()
@@ -105,7 +105,7 @@ resources.addTexture = function(source){
 	var texture = {
 		img: new Image()
 	};
-	texture.img.src = source;
+    texture.img.src = "../resources/graphics/textures/" + source;
 	
 	resources.textures.push(texture);
 	resources.numResources++;
@@ -119,7 +119,7 @@ resources.addDetail = function(source,originx,originy){
 		originX: originx,
 		originY: originy
 	};
-	detail.img.src = source;
+    detail.img.src = "../resources/graphics/details/" + source;
 	
 	resources.details.push(detail);
 	resources.numResources++;

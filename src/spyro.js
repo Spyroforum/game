@@ -10,13 +10,14 @@ var SPYRO_GLIDE_XSPEED = 18; // Max glide xspeed
 var SPYRO_HOVER_XSPEED = 5; // Max hover xspeed
 var SPYRO_FALL_XSPEED = 5; // Max fall xspeed
 var SPYRO_SLOPE_ANGLE_LIMIT = 45; // Only lines with a slope angle smaller than 45 degrees will count as a floor to stand on
+var SPYRO_MAX_HEALTH = 4;
 
 function Spyro(){
-    this.x = 100;
+	this.x = 100;
 	this.y = 100;
 	this.xspeed = 0;
 	this.yspeed = 0;
-    this.maxXSpeed = 15;
+	this.maxXSpeed = 15;
 	this.facing = -1;
 	this.sprite = sprSpyroIdle;
 	this.frame = 0;
@@ -25,7 +26,8 @@ function Spyro(){
 	this.radius = 32;
 	this.acceleration = 3;
 	this.onGround = false;
-    this.flame = 0;
+	this.flame = 0;
+	this.health = SPYRO_MAX_HEALTH;
 	
 	this.hovering = false;
 	this.jumping = false;
@@ -34,9 +36,9 @@ function Spyro(){
 	this.stateSteps = 0; // Used for counting how long Spyro has been jumping, hovering, falling etc.
 	
 	this.jump = function(){
-        // note: "-= speed" and "= -speed" makes a big difference for jumping
-        //       the first option makes spyro jump higher when he runs up steep cliff
-        this.yspeed = -SPYRO_JUMP_SPEED ;
+		// note: "-= speed" and "= -speed" makes a big difference for jumping
+		//	   the first option makes spyro jump higher when he runs up steep cliff
+		this.yspeed = -SPYRO_JUMP_SPEED ;
 		audio.playSound(sndJump, 1, false);
 		this.sprite = sprSpyroJump;
 		this.frame = 0;
@@ -49,7 +51,7 @@ function Spyro(){
 		this.jumping = false;
 		this.falling = false;
 		this.gliding = true;
-        this.yspeed = SPYRO_GLIDE_YSPEED ;
+		this.yspeed = SPYRO_GLIDE_YSPEED ;
 		this.sprite = sprSpyroGlide;
 		this.frame = 0;
 	}
@@ -250,31 +252,34 @@ function Spyro(){
 			if( this.onGround && ! this.falling )
 				this.whileOnGround();
 
-        this.updateFlame();
+		this.updateFlame();
 	}
 
-    this.updateFlame = function(){
-        if( this.flame > 0 || keyboard.isPressed(aKey) ){
-            if( this.flame < SPYRO_FLAME_WIDTH ){
-                this.flame += SPYRO_FLAME_SPEED;
-            } else this.flame = 0;
-        }
-    }
+	this.updateFlame = function(){
+		if(keyboard.isPressed(aKey)) // DELETE ME
+			this.hurt(0);			// DELETE ME
+
+		if( this.flame > 0 || keyboard.isPressed(aKey) ){
+			if( this.flame < SPYRO_FLAME_WIDTH ){
+				this.flame += SPYRO_FLAME_SPEED;
+			} else this.flame = 0;
+		}
+	}
 
 
-    this.flameX = function(){
-        return this.x + this.facing * ( this.radius + this.flame );
-    }
+	this.flameX = function(){
+		return this.x + this.facing * ( this.radius + this.flame );
+	}
 
 
-    this.flameY0 = function(){
-        return this.y - SPYRO_FLAME_HEIGHT / 2;
-    }
+	this.flameY0 = function(){
+		return this.y - SPYRO_FLAME_HEIGHT / 2;
+	}
 
 
-    this.flameY1 = function(){
-        return this.y + SPYRO_FLAME_HEIGHT / 2;
-    }
+	this.flameY1 = function(){
+		return this.y + SPYRO_FLAME_HEIGHT / 2;
+	}
 	
 	this.determineIfOnGround = function(nearLines){
 		var speed = Math.sqrt(this.xspeed * this.xspeed + this.yspeed * this.yspeed);
@@ -370,21 +375,44 @@ function Spyro(){
 		}
 	}
 
+
+	/**
+		Parameters:
+			type - id of harm type (ie fire, electricity, smash, etc) - will be added soon
+	*/
+	this.hurt = function(type){
+		// TODO - change spyro state
+		this.health--;
+		if(this.health < 0)
+			this.health = 0;
+	}
+
+	this.heal = function(){
+		this.health++;
+		if(this.health > SPYRO_MAX_HEALTH)
+			this.health = SPYRO_MAX_HEALTH;
+	}
+
+	this.liveUp = function(){
+		// TODO - raise number of lives
+		this.health = SPYRO_MAX_HEALTH;
+	}
+
 	this.draw = function(){
-        //Make Spyro draw himself
-        drawSprite(context, this.sprite, this.frame, this.x, this.y, this.facing, 1, this.rotation);
+		//Make Spyro draw himself
+		drawSprite(context, this.sprite, this.frame, this.x, this.y, this.facing, 1, this.rotation);
 		context.beginPath();
 		context.arc(this.x,this.y,32,0,2*Math.PI);
 		context.stroke();
 
-        // draw flame
-        if( this.flame > 0 ){
-            context.strokeStyle = "#FF4400";
-            context.lineWidth = 4;
-            context.beginPath();
-            context.moveTo( this.flameX(), this.flameY0() );
-            context.lineTo( this.flameX(), this.flameY1() );
-            context.stroke();
-        }
-    }
+		// draw flame
+		if( this.flame > 0 ){
+			context.strokeStyle = "#FF4400";
+			context.lineWidth = 4;
+			context.beginPath();
+			context.moveTo( this.flameX(), this.flameY0() );
+			context.lineTo( this.flameX(), this.flameY1() );
+			context.stroke();
+		}
+	}
 }

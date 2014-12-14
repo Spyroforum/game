@@ -24,9 +24,9 @@ function Butterfly(){
 
     this.init = function(){
         if(this.type == BUTTERFLY_HEALTH)
-            this.sprite = new Animation(sprButterflyHealth, ANIMATION_LOOP_MOVE);
+            this.sprite = new Animation(sprButterflyHealth, ANIMATION_LOOP_RL);
         else
-            this.sprite = new Animation(sprButterflyLife, ANIMATION_LOOP_MOVE);
+            this.sprite = new Animation(sprButterflyLife, ANIMATION_LOOP_RL);
     }
 
     this.step = function(){

@@ -66,7 +66,7 @@ function ChestLife(){
     this.radius = 32;
     this.alive = true;
     this.sprite = new Animation(sprChestLife);
-    this.spriteB = new Animation(sprButterflyLife, ANIMATION_LOOP_MOVE);
+    this.spriteB = new Animation(sprButterflyLife, ANIMATION_LOOP_RL);
 
     this.step = function(){
         if(!this.alive) return;

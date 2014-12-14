@@ -6,7 +6,7 @@ var redraw = 0;
 
 //Keyboard keys
 var leftKey, upKey, rightKey, downKey, aKey, sKey, rKey, xKey, yKey, cKey,
-        spaceKey, shiftKey, controlKey, returnKey, escapeKey;
+		spaceKey, shiftKey, controlKey, returnKey, escapeKey;
 
 //Objects
 var objTimer = null;
@@ -20,52 +20,54 @@ var objCamera = null;
 var gravity = 1.5;
 
 //Sprites
-var sprSpyroJump = resources.addSprite("graphics/sprSpyroJump.png", 6, 118, 82, 63, 38, 0);
-var sprSpyroBreak = resources.addSprite("graphics/sprSpyroBreak.png", 4, 116, 68, 74, 34, 0);
-var sprSpyroIdle = resources.addSprite("graphics/sprSpyroIdle.png", 19, 105, 71, 67, 33, 0);
-var sprSpyroRun = resources.addSprite("graphics/sprSpyroRun.png", 5, 116, 63, 68, 31, 0);
-var sprSpyroGlide = resources.addSprite("graphics/sprSpyroGlide.png", 4, 139, 67, 68, 31, 0);
-var sprSpyroHover = resources.addSprite("graphics/sprSpyroHover.png", 4, 92, 92, 40, 48, 0);
-var sprSpyroFall = resources.addSprite("graphics/sprSpyroFall.png", 10, 132, 65, 68, 30, 0);
+var sprSpyroJump = resources.addSprite("sprSpyroJump.png", 6, 118, 82, 63, 38, 0);
+var sprSpyroBreak = resources.addSprite("sprSpyroBreak.png", 4, 116, 68, 74, 34, 0);
+var sprSpyroIdle = resources.addSprite("sprSpyroIdle.png", 19, 105, 71, 67, 33, 0);
+var sprSpyroRun = resources.addSprite("sprSpyroRun.png", 5, 116, 63, 68, 31, 0);
+var sprSpyroGlide = resources.addSprite("sprSpyroGlide.png", 4, 139, 67, 68, 31, 0);
+var sprSpyroHover = resources.addSprite("sprSpyroHover.png", 4, 92, 92, 40, 48, 0);
+var sprSpyroFall = resources.addSprite("sprSpyroFall.png", 10, 132, 65, 68, 30, 0);
 
-var sprEnemy = resources.addSprite("graphics/sprEnemy.png", 1, 64, 64, 32, 32, 0);
-var sprSparx = resources.addSprite("graphics/sprSparx.png", 4, 32, 32, 16, 16, 0);
-var sprGemRed = resources.addSprite("graphics/sprGemRed.png", 1, 24, 24, 12, 12, 0);
-var sprGemGreen = resources.addSprite("graphics/sprGemGreen.png", 1, 24, 24, 12, 12, 0);
-var sprGemBlue = resources.addSprite("graphics/sprGemBlue.png", 1, 24, 24, 12, 12, 0);
-var sprGemYellow = resources.addSprite("graphics/sprGemYellow.png", 1, 24, 24, 12, 12, 0);
-var sprGemPurple = resources.addSprite("graphics/sprGemPurple.png", 1, 24, 24, 12, 12, 0);
+var sprEnemy = resources.addSprite("sprEnemy.png", 1, 64, 64, 32, 32, 0);
+var sprSparxYellow = resources.addSprite("sprSparxYellow.png", 4, 32, 32, 16, 16, 0);
+var sprSparxBlue = resources.addSprite("sprSparxBlue.png", 4, 32, 32, 16, 16, 0);
+var sprSparxGreen = resources.addSprite("sprSparxGreen.png", 4, 32, 32, 16, 16, 0);
+var sprGemRed = resources.addSprite("sprGemRed.png", 1, 24, 24, 12, 12, 0);
+var sprGemGreen = resources.addSprite("sprGemGreen.png", 1, 24, 24, 12, 12, 0);
+var sprGemBlue = resources.addSprite("sprGemBlue.png", 1, 24, 24, 12, 12, 0);
+var sprGemYellow = resources.addSprite("sprGemYellow.png", 1, 24, 24, 12, 12, 0);
+var sprGemPurple = resources.addSprite("sprGemPurple.png", 1, 24, 24, 12, 12, 0);
 
-var sprChestBasket = resources.addSprite("graphics/sprChestBasket.png", 1, 64, 48, 32, 24, 0);
-var sprChestVase = resources.addSprite("graphics/sprChestVase.png", 6, 26, 40, 12, 10, 0);
-var sprChestLife = resources.addSprite("graphics/sprChestLife.png", 1, 64, 64, 32, 32, 0);
+var sprChestBasket = resources.addSprite("sprChestBasket.png", 1, 64, 48, 32, 24, 0);
+var sprChestVase = resources.addSprite("sprChestVase.png", 6, 26, 40, 12, 10, 0);
+var sprChestLife = resources.addSprite("sprChestLife.png", 1, 64, 64, 32, 32, 0);
 
-var sprButterflyHealth = resources.addSprite("graphics/sprButterflyHealth.png", 6, 32, 32, 16, 16, 0);
-var sprButterflyLife = resources.addSprite("graphics/sprButterflyLife.png", 6, 32, 32, 16, 16, 0);
+var sprButterflyHealth = resources.addSprite("sprButterflyHealth.png", 6, 32, 32, 16, 16, 0);
+var sprButterflyLife = resources.addSprite("sprButterflyLife.png", 6, 32, 32, 16, 16, 0);
 
-var sprPortal = resources.addSprite("graphics/sprPortal.png", 1, 130, 160, 65, 80, 0);
+var sprPortal = resources.addSprite("sprPortal.png", 1, 130, 160, 65, 80, 0);
 
 var sprSky = [];
-sprSky[0] = resources.addSprite("graphics/sprSky1.png", 1, 1280, 564, 0, 0, 0);
-sprSky[1] = resources.addSprite("graphics/sprSky2.png", 1, 1280, 564, 0, 0, 0);
+sprSky[0] = resources.addSprite("sprSky1.png", 1, 1280, 564, 0, 0, 0);
+sprSky[1] = resources.addSprite("sprSky2.png", 1, 1280, 564, 0, 0, 0);
 
 //Sounds
-var sndRumble = resources.addSound("sounds/rumble.ogg");
-var sndJump = resources.addSound("sounds/jump.ogg");
+var sndRumble = resources.addSound("rumble.ogg");
+var sndJump = resources.addSound("jump.ogg");
 
 //Textures
-var texDesert = resources.addTexture("graphics/texDesert.png");
-var texDesert2 = resources.addTexture("graphics/texDesert2.png");
-var texSelected = resources.addTexture("graphics/texSelected.png");
-var texJumpThrough = resources.addTexture("graphics/texJumpThrough.png");
-var texJumpThroughInv = resources.addTexture("graphics/texJumpThroughInv.png");
+var texDesert = resources.addTexture("texDesert.png");
+var texDesert2 = resources.addTexture("texDesert2.png");
+var texSelected = resources.addTexture("texSelected.png");
+var texJumpThrough = resources.addTexture("texJumpThrough.png");
+var texJumpThroughInv = resources.addTexture("texJumpThroughInv.png");
 
 //Details
-var dtlCactus = resources.addDetail("graphics/dtlCactus1.png", 24, 32);
-var dtlDesertTower = resources.addDetail("graphics/dtlDesertTower.png", 28, 55);
-var dtlShadow1 = resources.addDetail("graphics/dtlShadow1.png", 40, 40);
-var dtlShadow2 = resources.addDetail("graphics/dtlShadow2.png", 40, 40);
-var dtlSandTop = resources.addDetail("graphics/dtlSandTop.png", 32, 8);
+var dtlCactus = resources.addDetail("dtlCactus1.png", 24, 32);
+var dtlDesertTower = resources.addDetail("dtlDesertTower.png", 28, 55);
+var dtlShadow1 = resources.addDetail("dtlShadow1.png", 40, 40);
+var dtlShadow2 = resources.addDetail("dtlShadow2.png", 40, 40);
+var dtlSandTop = resources.addDetail("dtlSandTop.png", 32, 8);
 
 //Levels
 var levelString = [];
@@ -78,7 +80,7 @@ gameInit();
 
 
 function debug(message){
-    document.getElementById("debug").innerHTML = message;
+	document.getElementById("debug").innerHTML = message;
 }
 
 //Below here are the game functions:
@@ -89,91 +91,91 @@ function gameInit(){
 	canvas.width = screenWidth;
 	canvas.height = screenHeight;
 	
-    initKeyboard();
-    initObjectTypes();
+	initKeyboard();
+	initObjectTypes();
 
-    objSparx = new Sparx();
-    objCamera = new Camera();
-    mainMenu = new MainMenu();
-    pauseMenu = new PauseMenu();
+	objSparx = new Sparx();
+	objCamera = new Camera();
+	mainMenu = new MainMenu();
+	pauseMenu = new PauseMenu();
 	
 	//Start the game loop
-    objTimer = new MainTimer( 1000/30, gameStep, repaint );
+	objTimer = new MainTimer( 1000/30, gameStep, repaint );
 	gameLoop = this.setInterval( "objTimer.update()", 1 );
 }
 
 
 function initKeyboard(){
-    //Add keyboard keys to "listen" for
-    leftKey = keyboard.addKey(37);
-    upKey = keyboard.addKey(38);
-    rightKey = keyboard.addKey(39);
-    downKey = keyboard.addKey(40);
-    spaceKey = keyboard.addKey(32);
-    shiftKey = keyboard.addKey(16);
-    controlKey = keyboard.addKey(17);
-    returnKey = keyboard.addKey(13);
-    escapeKey = keyboard.addKey(27);
-    aKey = keyboard.addKey(ord("A"));
-    sKey = keyboard.addKey(ord("S"));
-    rKey = keyboard.addKey(ord("R"));
-    xKey = keyboard.addKey(ord("X"));
-    yKey = keyboard.addKey(ord("Y"));
-    cKey = keyboard.addKey(ord("C"));
+	//Add keyboard keys to "listen" for
+	leftKey = keyboard.addKey(37);
+	upKey = keyboard.addKey(38);
+	rightKey = keyboard.addKey(39);
+	downKey = keyboard.addKey(40);
+	spaceKey = keyboard.addKey(32);
+	shiftKey = keyboard.addKey(16);
+	controlKey = keyboard.addKey(17);
+	returnKey = keyboard.addKey(13);
+	escapeKey = keyboard.addKey(27);
+	aKey = keyboard.addKey(ord("A"));
+	sKey = keyboard.addKey(ord("S"));
+	rKey = keyboard.addKey(ord("R"));
+	xKey = keyboard.addKey(ord("X"));
+	yKey = keyboard.addKey(ord("Y"));
+	cKey = keyboard.addKey(ord("C"));
 }
 
 
 function initObjectTypes(){
-    //Add object types to the list of objects that can be loaded from a level string, and are place-able in the level editor
-    addObjectType("Spyro", true, true, sprSpyroIdle, Spyro);//name, only one, must exist, sprite, constructor
-    var x = addObjectType("Enemy", false, false, sprEnemy, Enemy);
-    addObjectTypeProperty(x, "gemDrop", "The combined value of the gems the enemy should drop.", 5);//Default value is set to 5
-    x = addObjectType("Gem 1", false, false, sprGemRed, Gem);
-    addObjectTypeProperty(x, "value", "The value of the gem. (Should not be changed)", 1);
-    x = addObjectType("Gem 2", false, false, sprGemGreen, Gem);
-    addObjectTypeProperty(x, "value", "The value of the gem. (Should not be changed)", 2);
-    x = addObjectType("Gem 5", false, false, sprGemBlue, Gem);
-    addObjectTypeProperty(x, "value", "The value of the gem. (Should not be changed)", 5);
-    x = addObjectType("Gem 10", false, false, sprGemYellow, Gem);
-    addObjectTypeProperty(x, "value", "The value of the gem. (Should not be changed)", 10);
-    x = addObjectType("Gem 25", false, false, sprGemPurple, Gem);
-    addObjectTypeProperty(x, "value", "The value of the gem. (Should not be changed)", 25);
-    x = addObjectType("ChestBasket", false, false, sprChestBasket, ChestBasket);
-    addObjectTypeProperty(x, "gemDrop", "The combined value of the gems the chest should drop.", 5);
-    x = addObjectType("ChestVase", false, false, sprChestVase, ChestVase);
-    addObjectTypeProperty(x, "gemDrop", "The combined value of the gems the chest should drop.", 5);
-    x = addObjectType("ChestLife", false, false, sprChestLife, ChestLife);
-    x = addObjectType("Butterfly health", false, false, sprButterflyHealth, Butterfly);
-    addObjectTypeProperty(x, "type", "Butterfly type (Should not be changed)", BUTTERFLY_HEALTH);
-    x = addObjectType("Butterfly life", false, false, sprButterflyLife, Butterfly);
-    addObjectTypeProperty(x, "type", "Butterfly type (Should not be changed)", BUTTERFLY_LIFE);
+	//Add object types to the list of objects that can be loaded from a level string, and are place-able in the level editor
+	addObjectType("Spyro", true, true, sprSpyroIdle, Spyro);//name, only one, must exist, sprite, constructor
+	var x = addObjectType("Enemy", false, false, sprEnemy, Enemy);
+	addObjectTypeProperty(x, "gemDrop", "The combined value of the gems the enemy should drop.", 5);//Default value is set to 5
+	x = addObjectType("Gem 1", false, false, sprGemRed, Gem);
+	addObjectTypeProperty(x, "value", "The value of the gem. (Should not be changed)", 1);
+	x = addObjectType("Gem 2", false, false, sprGemGreen, Gem);
+	addObjectTypeProperty(x, "value", "The value of the gem. (Should not be changed)", 2);
+	x = addObjectType("Gem 5", false, false, sprGemBlue, Gem);
+	addObjectTypeProperty(x, "value", "The value of the gem. (Should not be changed)", 5);
+	x = addObjectType("Gem 10", false, false, sprGemYellow, Gem);
+	addObjectTypeProperty(x, "value", "The value of the gem. (Should not be changed)", 10);
+	x = addObjectType("Gem 25", false, false, sprGemPurple, Gem);
+	addObjectTypeProperty(x, "value", "The value of the gem. (Should not be changed)", 25);
+	x = addObjectType("ChestBasket", false, false, sprChestBasket, ChestBasket);
+	addObjectTypeProperty(x, "gemDrop", "The combined value of the gems the chest should drop.", 5);
+	x = addObjectType("ChestVase", false, false, sprChestVase, ChestVase);
+	addObjectTypeProperty(x, "gemDrop", "The combined value of the gems the chest should drop.", 5);
+	x = addObjectType("ChestLife", false, false, sprChestLife, ChestLife);
+	x = addObjectType("Butterfly health", false, false, sprButterflyHealth, Butterfly);
+	addObjectTypeProperty(x, "type", "Butterfly type (Should not be changed)", BUTTERFLY_HEALTH);
+	x = addObjectType("Butterfly life", false, false, sprButterflyLife, Butterfly);
+	addObjectTypeProperty(x, "type", "Butterfly type (Should not be changed)", BUTTERFLY_LIFE);
 	x = addObjectType("Portal", false, false, sprPortal, Portal);
-    addObjectTypeProperty(x, "targetId", "The id of the level it leads to.", 0);
+	addObjectTypeProperty(x, "targetId", "The id of the level it leads to.", 0);
 }
 
 
 function repaint(){
-    redraw = true;
+	redraw = true;
 }
 
 
 function gameStep(){
 	if( resources.loaded ){
-	    if( mainMenu.active ){
-	        mainMenu.step();
-        } else if( objEditor == null ){
-            if( pauseMenu.active ){
-                pauseMenu.step();
-            } else if( objLevel != null ){
-                objLevel.step();
-                if( keyboard.isPressed( escapeKey ) ){
-                    pauseMenu.active = true;
-                }
-            }
+		if( mainMenu.active ){
+			mainMenu.step();
+		} else if( objEditor == null ){
+			if( pauseMenu.active ){
+				pauseMenu.step();
+			} else if( objLevel != null ){
+				objLevel.step();
+				if( keyboard.isPressed( escapeKey ) ){
+					pauseMenu.active = true;
+				}
+			}
 		} else {
 			objEditor.step();
 		}
-        objCamera.step();
+		objCamera.step();
 	} else {
 		resources.loadStep();
 	}
@@ -186,19 +188,19 @@ function gameStep(){
 
 
 function gameDraw(){
-    if( resources.loaded ){
-        if( mainMenu.active ){
-            mainMenu.draw();
-        }
-		else if( objEditor == null ){
-            objLevel.draw();
-            if( pauseMenu.active ) pauseMenu.draw();
-		} else {
-		    objEditor.draw();
+	if( resources.loaded ){
+		if( mainMenu.active ){
+			mainMenu.draw();
 		}
-        objCamera.draw();
-    }
-    
-    redraw = false;
+		else if( objEditor == null ){
+			objLevel.draw();
+			if( pauseMenu.active ) pauseMenu.draw();
+		} else {
+			objEditor.draw();
+		}
+		objCamera.draw();
+	}
+
+	redraw = false;
 }
 
