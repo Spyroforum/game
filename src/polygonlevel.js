@@ -1,9 +1,16 @@
 
-function PolygonLevel( str ){
+/**
+    Parameters:
+        id (int) - an unique id of the level
+*/
+function PolygonLevel(id){
 	this.polygons = [];
 	this.objects = [];
 	this.collisionGrid = null;
-	this.id = null;
+	this.id = id;
+    this.currentGemId = -1;
+    this.currentChestId = -1;
+    this.initialised = false;
 	
 	//Generate a collision grid, a rectangle covering all solid lines of polygons, split into smaller cells containing references to overlapping solid polygon lines
 	//Each cell will contain an array. Each of those arrays(if there are any solid lines touching the cell), will consist of objects with a polygonInd property and a pointInd property
@@ -119,6 +126,8 @@ function PolygonLevel( str ){
                 this.objects[i].init();
             }
         }
+
+        this.initialised = true;
 	}
 	
 	this.step = function(){
@@ -149,19 +158,22 @@ function PolygonLevel( str ){
 			}
 		}
 	}
+
 	
 	this.draw = function(){
 		for( var g = 0; g < 1; g++){
-			
-			// Clear the canvas with a pink background colour
-			context.setTransform(1, 0, 0, 1, 0, 0);
-			context.fillStyle = 'rgb(185, 140, 170)';
-			context.fillRect(0, 0, screenWidth, screenHeight);
+            // draw static content
+			objCamera.setStaticView();
+            context.fillStyle = "rgba(185,140,170,1)";
+            objCamera.clear();
+
+            // draw background - sky
 			if( this.id != null )
 				if( sprSky[this.id] != null )
-					drawSprite(context,sprSky[this.id], 0, -objCamera.x*0.1-200, -objCamera.y*0.1-100, 1, 1, 0)
+					drawSprite(context, sprSky[this.id], 0, -objCamera.x*0.1-200, -objCamera.y*0.1-100, 1, 1, 0)
 			
-			objCamera.setView(context);
+            // draw ingame content
+			objCamera.setIngameView();
 		
 			context.save();
 			//Draw all polygons
@@ -179,6 +191,7 @@ function PolygonLevel( str ){
 			context.restore();
 		}
 	}
+
 	
 	this.loadString = function(str){
 		
@@ -334,7 +347,9 @@ function PolygonLevel( str ){
 		}
 	}
 
-    this.addGem = function(x, y, xspeed, yspeed, value, picked){
+    this.addGem = function(x, y, xspeed, yspeed, value, picked, id){
+        if(saveData.isGemCollected(this.id, id)) return;
+
         var gem = new Gem();
         gem.x = x;
         gem.y = y;
@@ -342,6 +357,7 @@ function PolygonLevel( str ){
         gem.yspeed = yspeed;
         gem.value = value;
         gem.picked = picked;
+        gem.id = id;
         gem.init();
         this.objects.push(gem);
         this.Gem.push(gem);
@@ -356,7 +372,20 @@ function PolygonLevel( str ){
         this.objects.push(butt);
         this.Butterfly.push(butt);
     }
-	
-	this.loadString(str);
-	this.init();
+
+    /**
+        Should be called only at the very beginning of a level.
+    */
+    this.genGemId = function(){
+        this.currentGemId += 1;
+        return this.currentGemId;
+    }
+
+    /**
+        Should be called only at the very beginning of a level.
+    */
+    this.genChestId = function(){
+        this.currentChestId += 1;
+        return this.currentChestId;
+    }
 }

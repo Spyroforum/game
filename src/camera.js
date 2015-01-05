@@ -35,10 +35,18 @@ function Camera(){
         }
 	}
 
-	this.setView = function(context){
-		context.setTransform(1, 0, 0, 1, 0, 0);//Clear all previous transformation
-		context.translate( -this.x, -this.y);
-	}
+    this.setStaticView = function(){
+        context.setTransform(1, 0, 0, 1, 0, 0); // Clear all previous transformation
+    }
+
+    this.setIngameView = function(){
+        context.setTransform(1, 0, 0, 1, 0, 0); // Clear all previous transformation
+		context.translate(-this.x, -this.y);
+    }
+
+    this.clear = function(){
+        context.fillRect(0, 0, screenWidth, screenHeight);
+    }
 
     /**
         Tells the camera to start fading out.
@@ -57,13 +65,11 @@ function Camera(){
     }
 
     this.draw = function(){
-        if(this.fadeAlpha <= 0) return;
+        this.setStaticView();
 
-        context.setTransform(1, 0, 0, 1, 0, 0);
-        var oldAlpha = context.globalAlpha;
-        context.globalAlpha = this.fadeAlpha;
-        context.fillStyle = "#000000";
-        context.fillRect( 0, 0, screenWidth, screenHeight );
-        context.globalAlpha = oldAlpha;
+        if(this.fadeAlpha > 0){
+            context.fillStyle = "rgba(0, 0, 0, " + this.fadeAlpha.toString() + ")";
+            this.clear();
+        }
     }
 }

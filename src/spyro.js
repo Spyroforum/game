@@ -394,7 +394,7 @@ function Spyro(){
 	}
 
 	this.liveUp = function(){
-		// TODO - raise number of lives
+		saveData.lives += 1;
 		this.health = SPYRO_MAX_HEALTH;
 	}
 

@@ -36,12 +36,14 @@ resources.loadStep = function(){
 	}
 	
 	//Draw loading bar on black background
-    context.setTransform(1, 0, 0, 1, 0, 0);
-    context.fillStyle = 'rgb(0, 0, 0)';//Black
-    context.fillRect(0, 0, screenWidth, screenHeight);
-    context.fillStyle = 'rgb(127, 127, 127)';//Gray unfilled area
+    objCamera.setStaticView();
+    context.fillStype = "rgb(0,0,0)";
+    objCamera.clear();
+
+    context.fillStyle = "rgb(127,127,127)";
     context.fillRect(0, screenHeight / 2 - 32, screenWidth, 64);
-    context.fillStyle = 'rgb(255, 255, 255)';//White filled area
+
+    context.fillStyle = "rgb(255,255,255)";
     context.fillRect(0, screenHeight / 2 - 32, screenWidth * currentlyLoaded / this.numResources, 64);
 	
 	if(currentlyLoaded == this.numResources)

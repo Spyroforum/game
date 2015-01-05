@@ -14,8 +14,16 @@ function Gem(){
     this.alive = true; // tells if the gem should be removed from the array
     this.sspeed = 0;   // move speed when picked by sparx
 	this.settled = false; // whether the gem has settled in place or not
+    this.id = 0; // gem id unique within a level
 
     this.init = function(){
+        if(objLevel.initialised === false){
+            // cannot assign id ingame, only at the very beginning of a level
+            this.id = objLevel.genGemId();
+            if(saveData.isGemCollected(objLevel.id, this.id))
+                this.alive = false;
+        }
+
         if( this.value == 1 )
             this.sprite = sprGemRed;
         else if( this.value == 2 )
@@ -72,7 +80,7 @@ function Gem(){
 
 
     this.kill = function(){
-        // TODO: increase gem count
+        saveData.setGemCollected(objLevel.id, this.id, this.value);
         objSparx.notifyGemKilled(this);
         this.alive = false;
     }

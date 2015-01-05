@@ -134,14 +134,12 @@ function MainTimer( delay, fstep, fdraw ){
             if( this.step_timer.stack > 2000 ) this.step_timer.stack = 2000;
         
             // auto FPS change
-            if( this.step_timer.stack > this.step_timer.min_delay ){
+            if( this.step_timer.stack > this.step_timer.min_delay )
                 this.draw_timer.moreDelay();
-                document.getElementById("out").innerHTML = "FPS: " + (1000 / this.draw_timer.delay)
-            }
-            else {
+            else
                 this.draw_timer.lessDelay();
-                document.getElementById("out").innerHTML = "FPS: " + (1000 / this.draw_timer.delay)
-            }
+
+            elementSetText("fps", "FPS: " + (1000 / this.draw_timer.delay));
         }
         
         return rval;

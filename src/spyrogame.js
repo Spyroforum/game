@@ -1,8 +1,10 @@
 //Variables:
 //General:
-var canvas = document.getElementById("gamecanvas"), context = canvas.getContext("2d");
+var canvas = document.getElementById("gamecanvas");
+var context = canvas.getContext("2d");
 var gameLoop, screenWidth, screenHeight;
 var redraw = 0;
+var saveData = new SaveData();
 
 //Keyboard keys
 var leftKey, upKey, rightKey, downKey, aKey, sKey, rKey, xKey, yKey, cKey,
@@ -79,8 +81,20 @@ levelString[2] = "@Polygon{x:177£y:288£jumpThrough:false£visible:true£bgColo
 gameInit();
 
 
+/**
+    Sets text of given html element.
+
+    Parameters:
+        elementName (string) - div id
+        text (string)
+*/
+function elementSetText(elementName, text){
+    document.getElementById(elementName).innerHTML = text;
+}
+
+
 function debug(message){
-	document.getElementById("debug").innerHTML = message;
+    elementSetText("debug", message);
 }
 
 //Below here are the game functions:
@@ -168,6 +182,9 @@ function gameStep(){
 				pauseMenu.step();
 			} else if( objLevel != null ){
 				objLevel.step();
+
+                elementSetText("saveData", saveData.toString(objLevel.id)); // for debug only
+
 				if( keyboard.isPressed( escapeKey ) ){
 					pauseMenu.active = true;
 				}

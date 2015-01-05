@@ -24,7 +24,7 @@ function Portal(){
 			// Bottom left point again
 			context.lineTo(this.x-this.width/2*0.6,this.y+this.height/2);
 			context.clip();
-			drawSprite(context,sprSky[this.targetId],0,objCamera.x, objCamera.y,1,1,0);
+			drawSprite(context, sprSky[this.targetId],0,objCamera.x, objCamera.y,1,1,0);
 		context.restore();
     }
 }

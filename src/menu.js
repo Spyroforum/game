@@ -14,12 +14,6 @@ function MenuItem( label, x, y, action ){
     this.x = x;
     this.y = y;
     this.action = action;
-    
-    this.draw = function(){
-        context.font = "20px Arial";
-        context.textAlign = 'center';
-        context.fillText( this.label, this.x, this.y );
-    }
 }
 
 
@@ -28,37 +22,36 @@ function MenuItem( label, x, y, action ){
         keyboard keys for moving to the next and previous item
 */
 function MenuPage( nextKey, previousKey ){
-    this.items = new Array();
-    this.current_item = 0;
+    this.items = [];
+    this.selectedItemID = 0;
     this.nextKey = nextKey;
     this.previousKey = previousKey;
 
     this.restart = function(){
-        this.current_item = 0;
+        this.selectedItemID = 0;
     }
     
     this.step = function(){
         if( keyboard.isPressed(this.previousKey) ){
-            this.previousItem();
+            this.selectPreviousItem();
         }
         if( keyboard.isPressed(this.nextKey) ){
-            this.nextItem();
+            this.selectNextItem();
         }
         if( keyboard.isPressed(returnKey) ){
-            this.items[ this.current_item ].action();
+            this.selectedItem().action();
         }
     }
     
     this.draw = function(){
-        for( i = 0; i < this.items.length; i++ ){
-            // choose color for item text
+        for(var i = 0; i < this.items.length; i++){
             // current item has differend color than the other items
-            if( i == this.current_item )
-                context.fillStyle = "#FFFFFF";
+            if(i == this.selectedItemID)
+                context.fillStyle = "rgba(255,255,255,1)";
             else
-                context.fillStyle = "#888888";
+                context.fillStyle = "rgba(127,127,127,1)";
         
-            this.items[i].draw();
+            drawText(context, this.items[i].label, this.items[i].x, this.items[i].y, "20px Arial", "center");
         }
     }
     
@@ -69,48 +62,50 @@ function MenuPage( nextKey, previousKey ){
         this.items.push( new MenuItem( label, x, y, action ) );
     }
     
-    this.nextItem = function(){
-        if( this.current_item + 1 >= this.items.length ) return;
-        this.current_item++;
+    this.selectNextItem = function(){
+        if( this.selectedItemID + 1 >= this.items.length ) return;
+        this.selectedItemID++;
     }
     
-    this.previousItem = function(){
-        if( this.current_item - 1 < 0 ) return;
-        this.current_item--;
+    this.selectPreviousItem = function(){
+        if( this.selectedItemID - 1 < 0 ) return;
+        this.selectedItemID--;
+    }
+
+    this.selectedItem = function(){
+        return this.items[this.selectedItemID];
     }
 }
 
 
 function MainMenu(){
-    // variables:
     this.active = true;
     this.pages = [];
-    this.current_page = 0;
+    this.currentPageID = 0;
 
-    // functions:
     this.restart = function(){
         this.active = true;
-        this.current_page = 0;
+        this.currentPageID = 0;
         for( var i = 0; i < this.pages.length; i++ ){
             this.pages[i].restart();
         }
     }
     
     this.step = function(){
-        this.pages[ this.current_page ].step();
+        this.pages[ this.currentPageID ].step();
     }
     
     this.draw = function(){
-        context.setTransform( 1, 0, 0, 1, 0, 0 );
-        context.fillStyle = '#000000';
-	    context.fillRect( 0, 0, screenWidth, screenHeight );
-	    this.pages[ this.current_page ].draw();
+        objCamera.setStaticView();
+        context.fillStyle = "rgba(0,0,0,1)";
+        objCamera.clear();
+	    this.pages[ this.currentPageID ].draw();
     }
 
     // create pages for main menu:
     // first page asking if you want to run game or editor
     var page = new MenuPage( rightKey, leftKey );
-    page.addItem( "Game", screenWidth / 2 - 64, 256, function(){ mainMenu.current_page++; } );
+    page.addItem( "Game", screenWidth / 2 - 64, 256, function(){ mainMenu.currentPageID++; } );
     page.addItem( "Editor", screenWidth / 2 + 64, 256, function(){ objEditor = new Editor(); mainMenu.active = false; } );
     this.pages.push( page );
 
@@ -124,15 +119,13 @@ function MainMenu(){
 
 
 function PauseMenu(){
-    // variables:
     this.active = false;
     this.pages = [];
-    this.current_page = 0;
+    this.currentPageID = 0;
 
-    // functions:
     this.restart = function(){
         this.active = false;
-        this.current_page = 0;
+        this.currentPageID = 0;
         for( var i = 0; i < this.pages.length; i++ ){
             this.pages[i].restart();
         }
@@ -142,22 +135,21 @@ function PauseMenu(){
         if( keyboard.isPressed(escapeKey) ){
             this.active = false;
         } else {
-            this.pages[ this.current_page ].step();
+            this.pages[ this.currentPageID ].step();
         }
     }
 
     this.draw = function(){
-        var old_alpha = context.globalAlpha;
         var width = MENU_PAUSE_WIDTH;
         var height = MENU_PAUSE_HEIGHT;
         var x1 = (screenWidth - width) / 2;
         var x2 = x1 + width;
         var y1 = (screenHeight - height) / 2;
         var y2 = y1 + height;
-        context.setTransform( 1, 0, 0, 1, 0, 0 );
-        context.fillStyle = '#000000';
-        context.globalAlpha = 0.75;
-        context.fillRect( x1, y1 - MENU_PAUSE_BORDER_SIZE, width, height + 2*MENU_PAUSE_BORDER_SIZE );
+
+        objCamera.setStaticView();
+        context.fillStyle = "rgba(0,0,0,0.75)";
+        context.fillRect(x1, y1 - MENU_PAUSE_BORDER_SIZE, width, height + 2*MENU_PAUSE_BORDER_SIZE);
 
         // draw border with rounded corners
         this.drawCorner( x2, y1, 270, 0 ); // right top
@@ -167,9 +159,7 @@ function PauseMenu(){
         context.fillRect( x1 - MENU_PAUSE_BORDER_SIZE, y1, MENU_PAUSE_BORDER_SIZE, height ); // left
         context.fillRect( x2, y1, MENU_PAUSE_BORDER_SIZE, height ); // right
 
-        context.globalAlpha = old_alpha;
-
-        this.pages[ this.current_page ].draw();
+        this.pages[ this.currentPageID ].draw();
     }
 
     this.drawCorner = function( x, y, a1, a2 ){
@@ -199,8 +189,9 @@ function goToMainMenu(){
 
 function changeLevel(id){
     objCamera.fadeOut( function(){
-        objLevel = new PolygonLevel(levelString[id]);
-		objLevel.id = id;
+        objLevel = new PolygonLevel(id);
+        objLevel.loadString(levelString[id]);
+        objLevel.init();
         mainMenu.active = false;
     });
 }

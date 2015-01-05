@@ -9,6 +9,11 @@ function Enemy(){
 	this.acceleration = 1;
 	this.radius = 32;
     this.alive = true;
+    this.gemId = 0; // gem id unique within a level
+
+    this.init = function(){
+        this.gemId = objLevel.genGemId();
+    }
 
 	this.step = function(){
         if( !this.alive ) return;
@@ -34,11 +39,18 @@ function Enemy(){
         //Jump randomly
         if( onGround && Math.random() < 0.1 ) this.yspeed -= 25;
 
-        if(isFlamed(this) || isCharged(this)){
-            objLevel.addGem(this.x, this.y, 0, -10, this.gemDrop, false);
-            this.alive = false;
-        }
+        if(isFlamed(this)) this.kill(false);
+        if(isCharged(this)) this.kill(true);
 	}
+
+    /**
+        Parameters:
+            picked (boolean) - if the gem should be picked when created
+    */
+    this.kill = function(picked){
+        objLevel.addGem(this.x, this.y, 0, -10, this.gemDrop, picked, this.gemId);
+        this.alive = false;
+    }
 
 
 	this.draw = function(){

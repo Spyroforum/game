@@ -4,19 +4,35 @@ function ChestBasket(){
     this.alive = true;
     this.sprite = new Animation(sprChestBasket);
     this.gemDrop = 1;
+    this.gemId = 0;  // gem id unique within a level
+    this.id = 0; // chest id unique within a level
+
+    this.init = function(){
+        this.id = objLevel.genChestId();
+        this.gemId = objLevel.genGemId();
+
+        if(saveData.isChestCollected(objLevel.id, this.id)){
+            this.alive = false;
+            if(!saveData.isGemCollected(objLevel.id, this.gemId))
+                objLevel.addGem(this.x, this.y, 0, 0, this.gemDrop, false, this.gemId);
+        }
+    }
 
     this.step = function(){
         if(!this.alive) return;
 
-        if(isFlamed(this)){
-            objLevel.addGem(this.x, this.y, 0, -15, this.gemDrop, false);
-            this.alive = false;
-        }
+        if(isFlamed(this)) this.kill(false);
+        if(isCharged(this)) this.kill(true);
+    }
 
-        if(isCharged(this)){
-            objLevel.addGem(this.x, this.y, 0, -15, this.gemDrop, true);
-            this.alive = false;
-        }
+    /**
+        Parameters:
+            picked (boolean) - if the gem should be picked when created
+    */
+    this.kill = function(picked){
+        objLevel.addGem(this.x, this.y, 0, -15, this.gemDrop, picked, this.gemId);
+        saveData.setChestCollected(objLevel.id, this.id);
+        this.alive = false;
     }
 
     this.draw = function(){
@@ -31,7 +47,20 @@ function ChestVase(){
     this.alive = true;
     this.sprite = new Animation(sprChestVase);
     this.gemDrop = 1;
+    this.gemId = 0;  // gem id unique within a level
+    this.id = 0; // chest id unique within a level
     this.hot = 0;
+
+    this.init = function(){
+        this.id = objLevel.genChestId();
+        this.gemId = objLevel.genGemId();
+
+        if(saveData.isChestCollected(objLevel.id, this.id)){
+            this.alive = false;
+            if(!saveData.isGemCollected(objLevel.id, this.gemId))
+                objLevel.addGem(this.x, this.y, 0, 0, this.gemDrop, false, this.gemId);
+        }
+    }
 
     this.step = function(){
         if(!this.alive) return;
@@ -44,10 +73,13 @@ function ChestVase(){
             this.hot -= 1; // cool down vase
         }
 
-        if(isCharged(this)){
-            objLevel.addGem(this.x, this.y, 0, -15, this.gemDrop, true);
-            this.alive = false;
-        }
+        if(isCharged(this)) this.kill(true);
+    }
+
+    this.kill = function(picked){
+        objLevel.addGem(this.x, this.y, 0, -15, this.gemDrop, picked, this.gemId);
+        saveData.setChestCollected(objLevel.id, this.id);
+        this.alive = false;
     }
 
     this.draw = function(){
@@ -67,16 +99,28 @@ function ChestLife(){
     this.alive = true;
     this.sprite = new Animation(sprChestLife);
     this.spriteB = new Animation(sprButterflyLife, ANIMATION_LOOP_RL);
+    this.id = 0; // chest id unique within a level
+
+    this.init = function(){
+        this.id = objLevel.genChestId();
+
+        if(saveData.isChestCollected(objLevel.id, this.id)){
+            this.alive = false;
+        }
+    }
 
     this.step = function(){
         if(!this.alive) return;
 
-        if(isFlamed(this) || isCharged(this)){
-            objLevel.addButterfly(this.x, this.y, BUTTERFLY_LIFE);
-            this.alive = false;
-        }
+        if(isFlamed(this) || isCharged(this)) this.kill();
 
         this.spriteB.nextFrame();
+    }
+
+    this.kill = function(){
+        objLevel.addButterfly(this.x, this.y, BUTTERFLY_LIFE);
+        saveData.setChestCollected(objLevel.id, this.id);
+        this.alive = false;
     }
 
     this.draw = function(){

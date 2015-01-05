@@ -1,8 +1,8 @@
+
 /*
 **	draws a single frame of a sprite
 **
 **	Parameters:
-**		<context> - the context of the canvas to draw on
 **		<spr> - the sprite to draw a frame of
 **		<frame> - the frame to draw
 **		<x> - the x coordinate of the drawn sprite
@@ -15,15 +15,14 @@
 **		Nothing
 */
 function drawSprite(context,spr,frame,x,y,xscale,yscale,angle){
-	context.translate(x, y);
-	context.rotate( -angle * Math.PI / 180);
-	context.scale(xscale, yscale);
-	context.drawImage(spr.img, (Math.round(frame) % spr.frames) * spr.width, 0, spr.width, spr.height, -spr.originX, -spr.originY, spr.width, spr.height);
-	context.scale(1 / xscale, 1 / yscale);
-	context.rotate( angle * Math.PI / 180);
-	context.translate( -x, -y);
+    context.translate(x, y);
+    context.rotate( -angle * Math.PI / 180);
+    context.scale(xscale, yscale);
+    context.drawImage(spr.img, (Math.round(frame) % spr.frames) * spr.width, 0, spr.width, spr.height, -spr.originX, -spr.originY, spr.width, spr.height);
+    context.scale(1 / xscale, 1 / yscale);
+    context.rotate( angle * Math.PI / 180);
+    context.translate( -x, -y);
 }
-
 
 /*
     Simplified version of function above.
@@ -34,6 +33,21 @@ function drawSpriteSimple(context, spr, frame, x, y){
     context.translate( -x, -y);
 }
 
+/**
+    Draws text at given position.
+
+    Parameters:
+        text (string) - text to be drawn
+        x, y (int) - position
+        font (string) - example: "15px Arial"
+        align (string) - eiter "left", "center" or "right"
+
+*/
+function drawText(context, text, x, y, font, align){
+    context.font = font;
+    context.textAlign = align;
+    context.fillText(text, x, y);
+}
 
 var ANIMATION_LOOP_R = 0; // moves to last frame and then JUMPS back to first frame
 var ANIMATION_LOOP_RL = 1; // moves to last frame and then MOVES back to the first frame
