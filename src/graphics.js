@@ -1,18 +1,19 @@
 
 /*
-**	draws a single frame of a sprite
+**    draws a single frame of a sprite
 **
-**	Parameters:
-**		<spr> - the sprite to draw a frame of
-**		<frame> - the frame to draw
-**		<x> - the x coordinate of the drawn sprite
-**		<y> - the y coordinate of the drawn sprite
-**		<xscale> - the x axis scale of the drawn sprite(before rotation)
-**		<yscale> - the y axis scale of the drawn sprite(before rotation)
-**		<angle> - the rotation angle of the drawn sprite
+**    Parameters:
+**      <context> - the context of the canvas to draw on
+**        <spr> - the sprite to draw a frame of
+**        <frame> - the frame to draw
+**        <x> - the x coordinate of the drawn sprite
+**        <y> - the y coordinate of the drawn sprite
+**        <xscale> - the x axis scale of the drawn sprite(before rotation)
+**        <yscale> - the y axis scale of the drawn sprite(before rotation)
+**        <angle> - the rotation angle of the drawn sprite
 **
-**	Returns:
-**		Nothing
+**    Returns:
+**        Nothing
 */
 function drawSprite(context,spr,frame,x,y,xscale,yscale,angle){
     context.translate(x, y);
