@@ -7,6 +7,10 @@ function LevelSaveData(){
     this._gemCollected = [];
     this._chestCollected = [];
 
+    this.getGemCount = function(){
+        return this._gemCount;
+    }
+
     /**
         Increases gem count by value and stores id of the gem which was collected.
     */
@@ -102,6 +106,11 @@ function SaveData(){
 
     this.getGemCount = function(){
         return this._gemCount;
+    }
+
+    this.getLevelGemCount = function(levelId){
+        if(this._levelsData[levelId] === undefined) return 0;
+        return this._levelsData[levelId].getGemCount();
     }
 
     this.toString = function(levelId){

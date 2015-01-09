@@ -8,6 +8,8 @@ function Camera(){
     this.fadeAlpha = 0;
     this.fadeSpeed = 0;
     this.fadeOutEvent = null;
+    this.infoPanelGems = new InfoPanel();
+    this.infoPanelLives = new InfoPanel();
 
 	this.step = function(){
         // update camera position
@@ -33,6 +35,9 @@ function Camera(){
                 if(this.fadeAlpha < 0) this.fadeAlpha = 0;
             }
         }
+
+        this.infoPanelGems.step();
+        this.infoPanelLives.step();
 	}
 
     this.setStaticView = function(){
@@ -71,5 +76,8 @@ function Camera(){
             context.fillStyle = "rgba(0, 0, 0, " + this.fadeAlpha.toString() + ")";
             this.clear();
         }
+
+        this.infoPanelGems.drawGemCount();
+        this.infoPanelLives.drawLiveCount();
     }
 }

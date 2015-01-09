@@ -10,7 +10,7 @@ function Timer(time){
 
     /*
         Increases cTicks by one.
-        If cTicks is greater or equal tTicks, then event function is called.
+        If cTicks is equal to tTicks, then event function is called.
         (the default event function is reset)
 
         Returns:
@@ -18,7 +18,7 @@ function Timer(time){
             false - otherwise
     */
     this.tick = function(){
-        if(this.cTicks >= this.tTicks){
+        if(this.cTicks == this.tTicks){
             this.event();
             return true;
         } else {

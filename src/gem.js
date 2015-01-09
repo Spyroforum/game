@@ -82,6 +82,7 @@ function Gem(){
     this.kill = function(){
         saveData.setGemCollected(objLevel.id, this.id, this.value);
         objSparx.notifyGemKilled(this);
+        objCamera.infoPanelGems.show();
         this.alive = false;
     }
 

@@ -396,6 +396,7 @@ function Spyro(){
 	this.liveUp = function(){
 		saveData.lives += 1;
 		this.health = SPYRO_MAX_HEALTH;
+        objCamera.infoPanelLives.show();
 	}
 
 	this.draw = function(){
