@@ -1,7 +1,7 @@
 
-var MENU_PAUSE_WIDTH = 128;
-var MENU_PAUSE_HEIGHT = 128;
-var MENU_PAUSE_BORDER_SIZE = 16;
+var MENU_PAUSE_WIDTH = 160;
+var MENU_PAUSE_HEIGHT = 160;
+var MENU_PAUSE_CORNER_SIZE = 16;
 
 /**
     Parameters:
@@ -26,10 +26,6 @@ function MenuPage( nextKey, previousKey ){
     this.selectedItemID = 0;
     this.nextKey = nextKey;
     this.previousKey = previousKey;
-
-    this.restart = function(){
-        this.selectedItemID = 0;
-    }
     
     this.step = function(){
         if( keyboard.isPressed(this.previousKey) ){
@@ -79,17 +75,8 @@ function MenuPage( nextKey, previousKey ){
 
 
 function MainMenu(){
-    this.active = true;
     this.pages = [];
     this.currentPageID = 0;
-
-    this.restart = function(){
-        this.active = true;
-        this.currentPageID = 0;
-        for( var i = 0; i < this.pages.length; i++ ){
-            this.pages[i].restart();
-        }
-    }
     
     this.step = function(){
         this.pages[ this.currentPageID ].step();
@@ -106,7 +93,7 @@ function MainMenu(){
     // first page asking if you want to run game or editor
     var page = new MenuPage( rightKey, leftKey );
     page.addItem( "Game", screenWidth / 2 - 64, 256, function(){ mainMenu.currentPageID++; } );
-    page.addItem( "Editor", screenWidth / 2 + 64, 256, function(){ objEditor = new Editor(); mainMenu.active = false; } );
+    page.addItem( "Editor", screenWidth / 2 + 64, 256, goToEditor );
     this.pages.push( page );
 
     // second page asking if you want to run small or big level
@@ -119,60 +106,32 @@ function MainMenu(){
 
 
 function PauseMenu(){
-    this.active = false;
     this.pages = [];
     this.currentPageID = 0;
 
-    this.restart = function(){
-        this.active = false;
-        this.currentPageID = 0;
-        for( var i = 0; i < this.pages.length; i++ ){
-            this.pages[i].restart();
-        }
-    }
-
     this.step = function(){
-        if( keyboard.isPressed(escapeKey) ){
-            this.active = false;
-        } else {
-            this.pages[ this.currentPageID ].step();
-        }
+        this.pages[ this.currentPageID ].step();
+        objCamera.infoPanelGems.show();
+        objCamera.infoPanelLives.show();
     }
 
     this.draw = function(){
-        var width = MENU_PAUSE_WIDTH;
-        var height = MENU_PAUSE_HEIGHT;
-        var x1 = (screenWidth - width) / 2;
-        var x2 = x1 + width;
-        var y1 = (screenHeight - height) / 2;
-        var y2 = y1 + height;
-
         objCamera.setStaticView();
         context.fillStyle = "rgba(0,0,0,0.75)";
-        context.fillRect(x1, y1 - MENU_PAUSE_BORDER_SIZE, width, height + 2*MENU_PAUSE_BORDER_SIZE);
-
-        // draw border with rounded corners
-        this.drawCorner( x2, y1, 270, 0 ); // right top
-        this.drawCorner( x1, y1, 180, 270 ); // left top
-        this.drawCorner( x1, y2, 90, 180 ); // left bottom
-        this.drawCorner( x2, y2, 0, 90 ); // right bottom
-        context.fillRect( x1 - MENU_PAUSE_BORDER_SIZE, y1, MENU_PAUSE_BORDER_SIZE, height ); // left
-        context.fillRect( x2, y1, MENU_PAUSE_BORDER_SIZE, height ); // right
+        drawRectangleRounded(context,
+                             (screenWidth - MENU_PAUSE_WIDTH) / 2,
+                             (screenHeight - MENU_PAUSE_HEIGHT) / 2,
+                             MENU_PAUSE_WIDTH,
+                             MENU_PAUSE_HEIGHT,
+                             MENU_PAUSE_CORNER_SIZE);
 
         this.pages[ this.currentPageID ].draw();
-    }
-
-    this.drawCorner = function( x, y, a1, a2 ){
-        context.beginPath();
-        context.arc( x, y, MENU_PAUSE_BORDER_SIZE, a1*Math.PI / 180, a2*Math.PI / 180, false );
-        context.lineTo( x, y );
-        context.fill();
     }
 
     // create pages for pause menu:
     // only first page at the moment
     var page = new MenuPage( downKey, upKey );
-    page.addItem( "Continue", screenWidth / 2, screenHeight / 2 - 32, function(){ pauseMenu.restart(); } );
+    page.addItem( "Continue", screenWidth / 2, screenHeight / 2 - 32, function(){ objLevel.pauseMenu = null; } );
     page.addItem( "Main menu", screenWidth / 2, screenHeight / 2, goToMainMenu );
     this.pages.push( page );
 }
@@ -180,9 +139,18 @@ function PauseMenu(){
 
 function goToMainMenu(){
     objCamera.fadeOut( function(){
+        mainMenu = new MainMenu();
         objLevel = null;
-        pauseMenu.restart();
-        mainMenu.restart();;
+        objEditor = null;
+    });
+}
+
+
+function goToEditor(){
+    objCamera.fadeOut( function(){
+        objEditor = new Editor();
+        mainMenu = null;
+        objLevel = null;
     });
 }
 
@@ -192,6 +160,9 @@ function changeLevel(id){
         objLevel = new PolygonLevel(id);
         objLevel.loadString(levelString[id]);
         objLevel.init();
-        mainMenu.active = false;
+        objCamera.infoPanelGems.show();
+        objCamera.infoPanelLives.show();
+        mainMenu = null;
+        objEditor = null;
     });
 }

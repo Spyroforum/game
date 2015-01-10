@@ -50,6 +50,51 @@ function drawText(context, text, x, y, font, align){
     context.fillText(text, x, y);
 }
 
+
+/**
+    Draws rectangle with rounded corners.
+
+    Parameters:
+        x, y (int) - position of top left corner
+        width, height (int) - including corners
+        cornerRadius (int)
+*/
+function drawRectangleRounded(context, x, y, width, height, cornerRadius){
+    var x1 = x + cornerRadius;
+    var y1 = y + cornerRadius;
+    var x2 = x + width - cornerRadius;
+    var y2 = y + height - cornerRadius;
+
+    context.fillRect(x1, y, width - 2*cornerRadius, height); // middle + top + bottom
+    context.fillRect(x, y1, cornerRadius, height - 2*cornerRadius); // left
+    context.fillRect(x2, y1, cornerRadius, height - 2*cornerRadius); // right
+
+    drawPie(context, x2, y1, 0, 90, cornerRadius); // right top
+    drawPie(context, x1, y1, 90, 180, cornerRadius); // left top
+    drawPie(context, x1, y2, 180, 270, cornerRadius); // left bottom
+    drawPie(context, x2, y2, 270, 360, cornerRadius); // right bottom
+}
+
+
+/**
+    Draws "pie" (part of circle) at given position.
+
+    Parameters:
+        x, y (number) - position of the center
+        a1, a2 (number) - starting, ending angle in degrees (counter clockwise, 0° on 3 hours)
+        r (number) - radius
+*/
+function drawPie(context, x, y, a1, a2, r){
+    // clockwise to counter clockwise conversion
+    a1 = 360 - a1;
+    a2 = 360 - a2;
+
+    context.beginPath();
+    context.arc(x, y, r, a2*Math.PI / 180, a1*Math.PI / 180, false);
+    context.lineTo(x, y);
+    context.fill();
+}
+
 var ANIMATION_LOOP_R = 0; // moves to last frame and then JUMPS back to first frame
 var ANIMATION_LOOP_RL = 1; // moves to last frame and then MOVES back to the first frame
 

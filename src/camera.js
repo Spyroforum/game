@@ -2,16 +2,16 @@
 var CAMERA_FADE_SPEED = 0.06;
 
 function Camera(){
-	this.x = 0;
-	this.y = 0;
-	this.target = null;
+    this.x = 0;
+    this.y = 0;
+    this.target = null; // requires: x, y
     this.fadeAlpha = 0;
     this.fadeSpeed = 0;
     this.fadeOutEvent = null;
     this.infoPanelGems = new InfoPanel();
     this.infoPanelLives = new InfoPanel();
 
-	this.step = function(){
+    this.step = function(){
         // update camera position
         if(this.target != null){
             this.x = this.target.x - screenWidth / 2;
@@ -38,7 +38,7 @@ function Camera(){
 
         this.infoPanelGems.step();
         this.infoPanelLives.step();
-	}
+    }
 
     this.setStaticView = function(){
         context.setTransform(1, 0, 0, 1, 0, 0); // Clear all previous transformation
@@ -46,7 +46,7 @@ function Camera(){
 
     this.setIngameView = function(){
         context.setTransform(1, 0, 0, 1, 0, 0); // Clear all previous transformation
-		context.translate(-this.x, -this.y);
+        context.translate(-this.x, -this.y);
     }
 
     this.clear = function(){

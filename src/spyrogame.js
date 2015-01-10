@@ -13,7 +13,6 @@ var leftKey, upKey, rightKey, downKey, aKey, sKey, rKey, xKey, yKey, cKey,
 //Objects
 var objTimer = null;
 var mainMenu = null;
-var pauseMenu = null;
 var objLevel = null;
 var objEditor = null;
 var objSpyro = null;
@@ -111,7 +110,6 @@ function gameInit(){
 	objSparx = new Sparx();
 	objCamera = new Camera();
 	mainMenu = new MainMenu();
-	pauseMenu = new PauseMenu();
 	
 	//Start the game loop
 	objTimer = new MainTimer( 1000/30, gameStep, repaint );
@@ -175,29 +173,21 @@ function repaint(){
 
 function gameStep(){
 	if( resources.loaded ){
-		if( mainMenu.active ){
+        if(objLevel != null){
+            objLevel.step();
+        } else if(mainMenu != null){
 			mainMenu.step();
-		} else if( objEditor == null ){
-			if( pauseMenu.active ){
-				pauseMenu.step();
-			} else if( objLevel != null ){
-				objLevel.step();
-
-                elementSetText("saveData", saveData.toString(objLevel.id)); // for debug only
-
-				if( keyboard.isPressed( escapeKey ) ){
-					pauseMenu.active = true;
-				}
-			}
-		} else {
-			objEditor.step();
+		} else if(objEditor != null){
+            objEditor.step();
 		}
+
 		objCamera.step();
 	} else {
 		resources.loadStep();
 	}
 
-	keyboard.update(); // Make keys go to the state of just being held or untouched after being pressed or released
+    // Make keys go to the state of just being held or untouched after being pressed or released
+	keyboard.update();
 	mouse.update();
 
 	if( redraw ) gameDraw();
@@ -206,15 +196,14 @@ function gameStep(){
 
 function gameDraw(){
 	if( resources.loaded ){
-		if( mainMenu.active ){
+        if(objLevel != null) {
+            objLevel.draw();
+        } else if(mainMenu != null){
 			mainMenu.draw();
-		}
-		else if( objEditor == null ){
-			objLevel.draw();
-			if( pauseMenu.active ) pauseMenu.draw();
-		} else {
+		} else if(objEditor != null){
 			objEditor.draw();
 		}
+
 		objCamera.draw();
 	}
 

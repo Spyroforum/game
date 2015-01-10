@@ -11,6 +11,8 @@ function PolygonLevel(id){
     this.currentGemId = -1;
     this.currentChestId = -1;
     this.initialised = false;
+    this.pauseMenu = null;
+    this.speechBox = new SpeechBox();
 	
 	//Generate a collision grid, a rectangle covering all solid lines of polygons, split into smaller cells containing references to overlapping solid polygon lines
 	//Each cell will contain an array. Each of those arrays(if there are any solid lines touching the cell), will consist of objects with a polygonInd property and a pointInd property
@@ -96,12 +98,14 @@ function PolygonLevel(id){
 		this.collisionGrid = g;
 	}
 	
+
 	//Create a list for each object type. These can then be accessed with(for example): this.Spyro[0], or this.Gem[n] where n is gem number n in the level.
 	//Or they can be accessed the way they are created, bracket style: this["Spyro"][0] or this["Gem"][n]
 	for(var n = 0; n < objectTypes.length; n++){
 		this[objectTypes[n].constrName] = [];
 	}
 	
+
 	this.init = function(){
 		
 		//Do stuff in addition to loading the contents of a level.
@@ -130,7 +134,24 @@ function PolygonLevel(id){
         this.initialised = true;
 	}
 	
+
 	this.step = function(){
+        if(keyboard.isPressed(escapeKey)){
+            if(this.pauseMenu == null)
+                this.pauseMenu = new PauseMenu();
+            else
+                this.pauseMenu = null;
+        }
+
+        if(this.pauseMenu != null){
+            this.pauseMenu.step();
+            return;
+        }
+
+        if(this.speechBox != null){
+            this.speechBox.step();
+        }
+
 		//Make all objects in the level run their step function
 		var l = this.objects.length;
 		for(var n = 0; n < l; n++){
@@ -157,6 +178,8 @@ function PolygonLevel(id){
 				}
 			}
 		}
+
+        elementSetText("saveData", saveData.toString(objLevel.id)); // for debug only
 	}
 
 	
@@ -189,6 +212,14 @@ function PolygonLevel(id){
 				this.objects[n].draw();
 			}
 			context.restore();
+
+            if(this.speechBox != null){
+                this.speechBox.draw();
+            }
+
+            if(this.pauseMenu != null){
+                this.pauseMenu.draw();
+            }
 		}
 	}
 
@@ -377,6 +408,7 @@ function PolygonLevel(id){
         Should be called only at the very beginning of a level.
     */
     this.genGemId = function(){
+        if(this.initialised) debug("Warning: gem id generated ingame.");
         this.currentGemId += 1;
         return this.currentGemId;
     }
@@ -385,6 +417,7 @@ function PolygonLevel(id){
         Should be called only at the very beginning of a level.
     */
     this.genChestId = function(){
+        if(this.initialised) debug("Warning: chest id generated ingame.");
         this.currentChestId += 1;
         return this.currentChestId;
     }
