@@ -157,6 +157,7 @@ function goToEditor(){
 
 function changeLevel(id){
     objCamera.fadeOut( function(){
+        objSparx.eatButterfly();
         objLevel = new PolygonLevel(id);
         objLevel.loadString(levelString[id]);
         objLevel.init();

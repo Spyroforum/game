@@ -421,4 +421,12 @@ function PolygonLevel(id){
         this.currentChestId += 1;
         return this.currentChestId;
     }
+
+    this.showSpeechBox = function(title, message){
+        this.speechBox.show(title, message);
+    }
+
+    this.hideSpeechBox = function(){
+        this.speechBox.hide();
+    }
 }
