@@ -140,7 +140,8 @@ function Spyro(){
 	}
 	
 	this.whileOnGround = function(){
-		if( keyboard.isHeld(leftKey) || keyboard.isHeld(rightKey)){
+        var hasFocus = !objLevel.isDialogActive();
+		if( hasFocus && (keyboard.isHeld(leftKey) || keyboard.isHeld(rightKey))){
 			this.sprite = sprSpyroRun;
 		} else {
 			if( this.sprite != sprSpyroBreak && this.sprite != sprSpyroIdle ){
@@ -160,6 +161,7 @@ function Spyro(){
 
 	this.step = function(){
 		//Keyboard input and controls
+        var hasFocus = !objLevel.isDialogActive();
 		
 		//Horizontal movement
 		//(Don't let him accelerate past his max xspeed by walking, but still allow for higher speeds given from the environment)
@@ -168,11 +170,11 @@ function Spyro(){
 		else if( this.gliding ) this.maxXSpeed = SPYRO_GLIDE_XSPEED;
 		else this.maxXSpeed = SPYRO_RUN_XSPEED;
 			
-		if( keyboard.isHeld(leftKey) ){
+		if(keyboard.isHeld(leftKey) && hasFocus){
 			this.xspeed = speedUpMinus(this.xspeed, this.acceleration, -this.maxXSpeed);
 			this.facing = -1;
 		}
-		if( keyboard.isHeld(rightKey) ){
+		if(keyboard.isHeld(rightKey) && hasFocus){
 			this.xspeed = speedUpPlus(this.xspeed, this.acceleration, this.maxXSpeed);
 			this.facing = 1;
 		}
@@ -190,7 +192,7 @@ function Spyro(){
 				this.yspeed += gravity;
 		
 		//Stop in mid-air when holding space
-		if( keyboard.isHeld(spaceKey) ){
+		if(keyboard.isHeld(spaceKey) && hasFocus){
 			this.xspeed = 0;
 			this.yspeed = 0;
 		}
@@ -210,7 +212,7 @@ function Spyro(){
 				this.fall();
 							
 			if( this.onGround ){//Friction when not holding holding left/right keys
-				if( ! keyboard.isHeld(leftKey) && ! keyboard.isHeld(rightKey) ){
+				if(!(keyboard.isHeld(leftKey) && hasFocus) && !(keyboard.isHeld(rightKey) && hasFocus)){
 					var ret = slowDownXY( this.xspeed, this.yspeed, 1.5 );
 					this.xspeed = ret.xspeed;
 					this.yspeed = ret.yspeed;
@@ -227,7 +229,7 @@ function Spyro(){
 			this.frame += this.animSpeed;
 			
 			//Jump related
-			if( keyboard.isPressed(upKey) ) {
+			if(keyboard.isPressed(upKey) && hasFocus) {
 				if( this.onGround ){
 					this.jump();
 				} else {
@@ -252,18 +254,12 @@ function Spyro(){
 			if( this.onGround && ! this.falling )
 				this.whileOnGround();
 
-		this.updateFlame();
-	}
-
-	this.updateFlame = function(){
-		if(keyboard.isPressed(aKey)) // DELETE ME
-			this.hurt(0);			// DELETE ME
-
-		if( this.flame > 0 || keyboard.isPressed(aKey) ){
-			if( this.flame < SPYRO_FLAME_WIDTH ){
-				this.flame += SPYRO_FLAME_SPEED;
-			} else this.flame = 0;
-		}
+        // update flame
+        if( this.flame > 0 || (keyboard.isPressed(aKey) && hasFocus) ){
+            if( this.flame < SPYRO_FLAME_WIDTH ){
+                this.flame += SPYRO_FLAME_SPEED;
+            } else this.flame = 0;
+        }
 	}
 
 

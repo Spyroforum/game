@@ -422,11 +422,19 @@ function PolygonLevel(id){
         return this.currentChestId;
     }
 
-    this.showSpeechBox = function(title, message){
-        this.speechBox.show(title, message);
+    this.showDialog = function(dialog){
+        this.speechBox.show(dialog);
     }
 
-    this.hideSpeechBox = function(){
+    this.hideDialog = function(){
         this.speechBox.hide();
+    }
+
+    this.isDialogActive = function(){
+        return this.speechBox.raise;
+    }
+
+    this.isDialogVisible = function(){
+        return this.speechBox.x > -screenWidth;
     }
 }

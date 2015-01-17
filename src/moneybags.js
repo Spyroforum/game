@@ -4,28 +4,22 @@ var MONEYBAGS_SPEAK_DISTANCE = 128;
 function Moneybags(){
     this.x = 0;
     this.y = 0;
-    this.message = "<empty>";
-    this.question = "<empty>";
-    this.yesOption = "<empty>";
-    this.noOption = "<empty>";
-    this.yesMessage = "<empty>";
-    this.noMessage = "<empty>";
-    this.action = null;
+    this.dialog = new Dialog();
     this.sprite = sprMoneybags;
     this.tooltip = false;
 
     this.init = function(){
         // TODO: handle save data here
+
+        this.dialog.addPage(new DialogPage("Moneybags", "Don't spam unless you are in the SPAM forum. Useless and/or severely off-topic messages are considered spam. These posts will be moved to the forum trash without warning.......................................................................................................................................................................................................................................................... Git rekt!"));
+        this.dialog.addPage(new DialogPage("Moneybags", "When you get a TNT crate on your head, start hopping immediately. If you react fast, and hop enough times, the TNT crate will fall of your head before it explodes."));
+        this.dialog.addPage(new DialogPage("Moneybags", "This has been a long time coming, I think. I've decided that our new policy is going to be allow videos and links with reasonable amounts* of ..."));
     }
 
     this.step = function(){
-        if(objectDistance(this, objSpyro) < MONEYBAGS_SPEAK_DISTANCE){
-            this.tooltip = true;
-            if(keyboard.isPressed(aKey))
-                objLevel.showSpeechBox("Moneybags", "Don't spam unless you are in the SPAM forum. Useless and/or severely off-topic messages are considered spam. These posts will be moved to the forum trash without warning.");
-        } else {
-            this.tooltip = false;
-            objLevel.hideSpeechBox();
+        this.tooltip = objectDistance(this, objSpyro) < MONEYBAGS_SPEAK_DISTANCE && !objLevel.isDialogVisible();
+        if(this.tooltip && keyboard.isPressed(aKey)){
+            objLevel.showDialog(this.dialog);
         }
     }
 

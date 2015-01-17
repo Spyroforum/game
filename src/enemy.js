@@ -31,6 +31,8 @@ function Enemy(){
             this.xspeed = slowDown( this.xspeed, 1.5 );
         }
 
+        chestCollision(this);
+
         //--Check if on ground, copied from spyro.js
         var nearLinesNotOverlapping = nearLines.slice(); // copies nearLines
         levelPartRemoveCircle(nearLinesNotOverlapping, this.x, this.y, this.radius * 0.99);
