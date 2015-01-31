@@ -431,10 +431,10 @@ function PolygonLevel(id){
     }
 
     this.isDialogActive = function(){
-        return this.speechBox.raise;
+        return this.speechBox.isActive();
     }
 
     this.isDialogVisible = function(){
-        return this.speechBox.x > -screenWidth;
+        return this.speechBox.isVisible();
     }
 }

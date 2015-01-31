@@ -17,128 +17,200 @@ function SpeechBox(){
     this.dialog = null;
     this.x = -screenWidth;
     this.border = 0;
-    this.raise = false;
     this.cursor = 0;
     this.scroll = 0;
+    this.currentPage = null;
+    this.currentPageId = 0;
+    this.currentOptionId = 0;
 
+
+    /**
+        Shows speech box, displaying given dialog.
+        Does nothing if passed null or undefined.
+        Player won't be able to control Spyro until the dialog is closed.
+    */
     this.show = function(dialog){
+        if(dialog === null || dialog === undefined) return;
+
         this.dialog = dialog;
-        this.dialog.reset();
-        this.raise = true;
+        this.currentPageId = 0;
+        this.currentPage = this.dialog.pages[this.currentPageId];
+
         this.cursor = 0;
         this.scroll = 0;
+        this.currentOptionId = 0;
+
+        this.step = this.stepRaise;
     }
 
-    this.hide = function(){
-        this.raise = false;
+
+    /**
+        Hides speech box and calls Dialog.closeAction function (if not null)
+    */
+    this.close = function(){
+        this.step = this.stepHide;
+
+        if(this.dialog != null)
+            if(this.dialog.closeAction != null)
+                this.dialog.closeAction.apply();
     }
+
 
     this.nextPage = function(){
-        this.dialog.nextPage();
+        if(this.hasMorePages()){
+            this.currentPageId++;
+            this.setPage(this.dialog.pages[this.currentPageId]);
+        } else {
+            this.close();
+        }
+    }
+
+
+    this.setPage = function(page){
+        this.currentPage = page;
+
         this.cursor = 0;
         this.scroll = 0;
-    }
+        this.currentOptionId = 0;
 
-    this.step = function(){
-        if(this.raise){ // if the box is to be shown
-            if(!this.moveBoxRight()){ // if the box is fully displayed
-                if(!this.nextCharacters(SPEECH_BOX_MESSAGE_SPEED)){ // if all text is displayed
-                    if(keyboard.isPressed(aKey)){
-                        if(this.dialog.hasMorePages())
-                            this.nextPage();
-                        else
-                            this.hide();
-                    } else if(keyboard.isPressed(upKey)){
-                        this.scrollUp();
-                    } else if(keyboard.isPressed(downKey)){
-                        this.scrollDown();
-                    }
-                } else { // if some text is still hidden
-                    if(keyboard.isPressed(aKey)){
-                        // show all text if player don't want to wait
-                        this.nextCharacters(this.dialog.currentPage().message.length);
-                    }
-                }
-            }
-        } else this.moveBoxLeft(); // if the box is to be hidden
+        this.step = this.stepRead;
     }
 
 
-    /**
-        Moves box and border to the right until its fully visible.
+    this.currentOption = function(){
+        return this.currentPage.options[this.currentOptionId];
+    }
 
-        Returns:
-            true if the box can still move (not affected by border)
-            false if the box is fully visible
-    */
-    this.moveBoxRight = function(){
-        this.x += SPEECH_BOX_MOVE_SPEED;
+
+    this.hasMorePages = function(){
+        return (this.currentPageId + 1) < this.dialog.pages.length;
+    }
+
+
+    this.hasOptions = function(){
+        return this.currentPage.options.length > 0;
+    }
+
+
+    this.stepBlank = function(){}
+
+    this.step = this.stepBlank;
+
+
+    this.stepRaise = function(){
         this.border += SPEECH_BOX_BORDER_SPEED;
         if(this.border > SPEECH_BOX_BORDER) this.border = SPEECH_BOX_BORDER;
+
+        this.x += SPEECH_BOX_MOVE_SPEED;
         if(this.x >= 0){
             this.x = 0;
-            return false;
-        } else return true;
+            if(this.border == SPEECH_BOX_BORDER)
+                this.step = this.stepRead;
+        }
     }
 
 
-    /**
-        Moves box and border to the left until its fully hidden.
-    */
-    this.moveBoxLeft = function(){
-        this.x -= SPEECH_BOX_MOVE_SPEED;
+    this.stepHide = function(){
         this.border -= SPEECH_BOX_BORDER_SPEED;
-        if(this.x < -screenWidth) this.x = -screenWidth;
         if(this.border < 0) this.border = 0;
+
+        this.x -= SPEECH_BOX_MOVE_SPEED;
+        if(this.x < -screenWidth){
+            this.x = -screenWidth;
+            if(this.border == 0)
+                this.step = this.stepBlank;
+        }
     }
 
 
-    /**
-        Shows next characters in the box, depending on message speed.
-        It also scrolls down automatically if the message is too long.
-
-        Parameters:
-            speed (int) - the number of next characters to be shown
-
-        Returns:
-            true if there are still characters left to be displayed
-            false if all text is fully displayed
-    */
-    this.nextCharacters = function(speed){
-        var mlength = this.dialog.currentPage().message.length;
-        var rval = true;
-        var oldCursor = this.cursor;
-        this.cursor += speed;
-        if(this.cursor >= mlength){
-            this.cursor = mlength-1;
-            rval = false;
+    this.stepRead = function(){
+        var mlength = this.currentPage.message.length;
+        this.cursor += SPEECH_BOX_MESSAGE_SPEED; // show next characters
+        if(this.cursor >= mlength || keyboard.isPressed(aKey)){ // if we reached the end or player don't want to wait
+            this.cursor = mlength;
+            this.step = this.stepWait;
         }
 
-        if(oldCursor != this.cursor)
-            this.scrollDown(); // auto scrolls down if needed
+        while(this.scrollDown()){} // scroll to the bottom
+    }
 
-        return rval;
+
+    this.stepWait = function(){
+        if(keyboard.isPressed(aKey)){
+            if(!this.hasOptions()){
+                this.nextPage();
+            } else {
+                var cop = this.currentOption();
+                if(cop.action !== null)
+                    this.dialog.closeAction = cop.action;
+                if(cop.nextPage !== null)
+                    this.setPage(cop.nextPage);
+                else
+                    this.nextPage();
+            }
+        } else if(keyboard.isPressed(upKey)){
+            this.optionUp();
+            this.scrollUp();
+        } else if(keyboard.isPressed(downKey)){
+            this.optionDown();
+            this.scrollDown();
+        }
     }
 
 
     /**
         Scrolls up in dialog by one line if possible.
+        Returns true if scrolled, false otherwise.
     */
     this.scrollUp = function(){
-        this.scroll--;
-        if(this.scroll < 0) this.scroll = 0;
+        if(this.scroll <= 0) return false;
+        else {
+            this.scroll--;
+            return true;
+        }
     }
 
 
     /**
         Scrolls down in dialog by one line if possible.
+        Returns true if scrolled, false otherwise.
     */
     this.scrollDown = function(){
         var maxScroll = Math.floor(this.cursor / SPEECH_BOX_ROW_SIZE) - SPEECH_BOX_VISIBLE_ROW_COUNT + 1;
-        if(maxScroll > 0){
+        if(this.cursor == this.currentPage.message.length) maxScroll += this.currentPage.options.length;
+
+        if(this.scroll >= maxScroll) return false;
+        else {
             this.scroll++;
-            if(this.scroll > maxScroll)
-                this.scroll = maxScroll;
+            return true;
+        }
+    }
+
+
+    /**
+        Moves option up if possible.
+        Returns true if moved, false otherwise.
+    */
+    this.optionUp = function(){
+        if(this.currentOptionId <= 0){
+            return false;
+        } else {
+            this.currentOptionId--;
+            return true;
+        }
+    }
+
+
+    /**
+        Moves option down if possible.
+        Returns true if moved, false otherwise.
+    */
+    this.optionDown = function(){
+        if(this.currentOptionId + 1 >= this.currentPage.options.length){
+            return false;
+        } else {
+            this.currentOptionId++;
+            return true;
         }
     }
 
@@ -146,6 +218,11 @@ function SpeechBox(){
     // returns true if any part of the speech box is visible
     this.isVisible = function(){
         return (this.x > -screenWidth) || (this.border > 0);
+    }
+
+
+    this.isActive = function(){
+        return (this.step !== this.stepBlank) && (this.step !== this.stepHide);
     }
 
 
@@ -166,20 +243,20 @@ function SpeechBox(){
         drawRectangleRounded(context, x, y, screenWidth - 2*SPEECH_BOX_MARGIN, SPEECH_BOX_HEIGHT,
                              SPEECH_BOX_CORNER_SIZE);
 
-        if(this.dialog == null) return;
+        if(this.dialog === null) return;
 
         // draw title
         x += SPEECH_BOX_PADDING;
         y += SPEECH_BOX_FONT_SIZE + SPEECH_BOX_PADDING;
         context.fillStyle = "rgb(255,255,255)";
-        drawText(context, this.dialog.currentPage().title, x, y, "bold " + SPEECH_BOX_FONT_SIZE + "px Courier", "left");
+        this.drawText(this.currentPage.title, x, y);
 
         context.save();
         context.rect(0, y, screenWidth, SPEECH_BOX_CONTENT_HEIGHT);
         context.clip();
 
         // draw message
-        var message = this.dialog.currentPage().message;
+        var message = this.currentPage.message;
         var start = 0;
         var end = SPEECH_BOX_ROW_SIZE - 1;
         var length = Math.min(message.length, this.cursor);
@@ -194,13 +271,28 @@ function SpeechBox(){
                 if(end < start) break;
             }
 
-            drawText(context, message.substring(start, end+1), x, y,
-                     "bold " + SPEECH_BOX_FONT_SIZE + "px Courier", "left");
+            this.drawText(message.substring(start, end+1), x, y);
 
             start += SPEECH_BOX_ROW_SIZE;
             end += SPEECH_BOX_ROW_SIZE;
         }
 
+        // draw options
+        if(this.hasOptions() && this.cursor >= message.length){
+            for(var i = 0; i < this.currentPage.options.length; i++){
+                if(i == this.currentOptionId)
+                    context.fillStyle = "rgb(255,255,255)";
+                else
+                    context.fillStyle = "rgb(127,127,127)";
+                this.drawText("* " + this.currentPage.options[i].label, x, y);
+                y += SPEECH_BOX_FONT_SIZE;
+            }
+        }
+
         context.restore();
+    }
+
+    this.drawText = function(message, x, y){
+        drawText(context, message, x, y, "bold " + SPEECH_BOX_FONT_SIZE + "px Courier", "left");
     }
 }
