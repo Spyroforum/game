@@ -176,8 +176,20 @@ function SpeechBox(){
         Returns true if scrolled, false otherwise.
     */
     this.scrollDown = function(){
-        var maxScroll = Math.floor(this.cursor / SPEECH_BOX_ROW_SIZE) - SPEECH_BOX_VISIBLE_ROW_COUNT + 1;
-        if(this.cursor == this.currentPage.message.length) maxScroll += this.currentPage.options.length;
+		var maxScroll = -SPEECH_BOX_VISIBLE_ROW_COUNT;
+		var start = 0;
+		var end;
+		var message = this.currentPage.message;
+		var length = message.length;
+		while( start <= this.cursor ){
+			if( start + SPEECH_BOX_ROW_SIZE >= length || message.indexOf(" ", start) >= start + SPEECH_BOX_ROW_SIZE )
+				end += SPEECH_BOX_ROW_SIZE;
+			else 
+				end = message.lastIndexOf(" ", start + SPEECH_BOX_ROW_SIZE);
+			start = end + 1;
+			maxScroll ++;
+		}
+        if(this.cursor == this.currentPage.message.length && this.currentPage.options.length > 0) maxScroll += this.currentPage.options.length-1;
 
         if(this.scroll >= maxScroll) return false;
         else {
@@ -258,34 +270,29 @@ function SpeechBox(){
         // draw message
         var message = this.currentPage.message;
         var start = 0;
-        var end = SPEECH_BOX_ROW_SIZE - 1;
-        var length = Math.min(message.length, this.cursor);
+        var end = 0;
+        var length = message.length;
         y -= this.scroll * SPEECH_BOX_FONT_SIZE;
-
-        while(true){
-            y += SPEECH_BOX_FONT_SIZE;
-
-            if(start >= length) break;
-            if(end >= length){
-                end = length - 1;
-                if(end < start) break;
-            }
-
-            this.drawText(message.substring(start, end+1), x, y);
-
-            start += SPEECH_BOX_ROW_SIZE;
-            end += SPEECH_BOX_ROW_SIZE;
+        while( start <= this.cursor ){
+			y += SPEECH_BOX_FONT_SIZE;
+			// If the current line covers the rest of the message, or if there is no " " (space) in the reach of the current line,
+			if( start + SPEECH_BOX_ROW_SIZE >= length || message.indexOf(" ", start) >= start + SPEECH_BOX_ROW_SIZE )
+				end += SPEECH_BOX_ROW_SIZE; // display as much of the message as possible on the current line.
+			else // Otherwise
+				end = message.lastIndexOf(" ", start + SPEECH_BOX_ROW_SIZE); // stop after the last complete word.
+			this.drawText(message.substring(start, Math.min(end + 1, this.cursor)), x, y);
+			start = end + 1;
         }
 
         // draw options
         if(this.hasOptions() && this.cursor >= message.length){
             for(var i = 0; i < this.currentPage.options.length; i++){
+			    y += SPEECH_BOX_FONT_SIZE;
                 if(i == this.currentOptionId)
                     context.fillStyle = "rgb(255,255,255)";
                 else
                     context.fillStyle = "rgb(127,127,127)";
                 this.drawText("* " + this.currentPage.options[i].label, x, y);
-                y += SPEECH_BOX_FONT_SIZE;
             }
         }
 

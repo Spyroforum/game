@@ -11,7 +11,7 @@ function Moneybags(){
     this.init = function(){
         // TODO: handle save data here
         this.dialog = new Dialog([
-            new DialogPage("Moneybags", "Don't spam unless you are in the SPAM forum. Useless and/or severely off-topic messages are considered spam. These posts will be moved to the forum trash without warning. ......................................................................... This has been a long time coming, I think. I've decided that our new policy is going to be allow videos and links with reasonable amounts* of ..."),
+			new DialogPage("Moneybags", "Don't spam unless you are in the SPAM forum. Useless and/or severely off-topic messages are considered spam. These posts will be moved to the forum trash without warning. ......................................................................... This has been a long time coming, I think. I've decided that our new policy is going to be allow videos and links with reasonable amounts* of ..."),
             new DialogPage("Moneybags", "When you get a TNT crate on your head, start hopping immediately. If you react fast, and hop enough times, the TNT crate will fall of your head before it explodes."),
             new DialogPage("Moneybags", "Choose a option: ", [
                new DialogOption("test 1", new DialogPage("Moneybags", "I see you choosed option 1.")),
