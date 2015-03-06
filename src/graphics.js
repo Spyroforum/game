@@ -105,7 +105,9 @@ var ANIMATION_LOOP_RL = 1; // moves to last frame and then MOVES back to the fir
 */
 function Animation(sprite, type){
     this.sprite = sprite;
-    this.frame = 0
+    this.frame = 0;
+	this.animSpeed = 1;
+	this.decimalFrame = 0;
 
     this.draw = function(x, y){
         drawSpriteSimple(context, this.sprite, this.frame, x, y);
@@ -118,6 +120,17 @@ function Animation(sprite, type){
     this.frameCount = function(){
         return this.sprite.frames;
     }
+	
+	this.randomFrame = function(){
+		this.decimalFrame = (Math.random()*this.frameCount()) % this.frameCount();
+		this.frame = Math.round(this.decimalFrame);
+		
+	}
+	
+	this.goToFrame = function(frame){
+		this.decimalFrame = (frame + this.frameCount()) % this.frameCount();
+		this.frame = Math.round(this.decimalFrame);
+	}
 
     // nextFrame function depends on animation type
     if(typeof type === 'undefined'){}
@@ -127,17 +140,17 @@ function Animation(sprite, type){
             if there are no more frames, then current frame is set to 0
         */
         this.nextFrame = function(){
-            this.frame++;
-            if(this.frame >= this.frameCount())
-                this.frame = 0;
+			this.decimalFrame = (this.decimalFrame + this.animSpeed + this.frameCount()) % this.frameCount();
+            this.frame = Math.round(this.decimalFrame);
         }
     } else if(type == ANIMATION_LOOP_RL){
         this.dir = 1;
         this.nextFrame = function(){
-            this.frame += this.dir;
+            this.decimalFrame += this.dir * this.animSpeed;
             // if no more frames to the left or right
-            if(this.frame <= 0 || this.frame >= this.frameCount()-1)
+            if(this.decimalFrame <= 0 || this.decimalFrame >= this.frameCount()-1)
                 this.dir *= -1;
+			this.frame = Math.round(this.decimalFrame);
         }
     }
 }

@@ -398,9 +398,9 @@ function Spyro(){
 	this.draw = function(){
 		//Make Spyro draw himself
 		drawSprite(context, this.sprite, this.frame, this.x, this.y, this.facing, 1, this.rotation);
-		context.beginPath();
+		/*context.beginPath();
 		context.arc(this.x,this.y,32,0,2*Math.PI);
-		context.stroke();
+		context.stroke();*/
 
 		// draw flame
 		if( this.flame > 0 ){

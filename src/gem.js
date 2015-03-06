@@ -23,7 +23,7 @@ function Gem(){
             if(saveData.isGemCollected(objLevel.id, this.id))
                 this.alive = false;
         }
-
+		
         if( this.value == 1 )
             this.sprite = sprGemRed;
         else if( this.value == 2 )
@@ -35,7 +35,9 @@ function Gem(){
         else if( this.value == 25 )
             this.sprite = sprGemPurple;
 
-        this.sprite = new Animation(this.sprite);
+        this.sprite = new Animation(this.sprite, ANIMATION_LOOP_R);
+		this.sprite.randomFrame();
+		this.sprite.animSpeed = 0.5 - Math.round(Math.random());
     }
 
     this.step = function(){
@@ -71,7 +73,8 @@ function Gem(){
                 }
             }
         }
-
+		
+		this.sprite.nextFrame();
         // If Spyro picks this gem
         if( objectCollide( this, objSpyro ) ){
             this.kill();
@@ -80,6 +83,20 @@ function Gem(){
 
 
     this.kill = function(){
+		if( this.value == 1 ){
+            objLevel.objects.push(new BouncyParticle(this.x, this.y, sprDigit1, PARTICLE_DIGIT));
+        } else if( this.value == 2 ){
+            objLevel.objects.push(new BouncyParticle(this.x, this.y, sprDigit2, PARTICLE_DIGIT));
+        } else if( this.value == 5 ){
+            objLevel.objects.push(new BouncyParticle(this.x, this.y, sprDigit5, PARTICLE_DIGIT));
+        } else if( this.value == 10 ){
+            objLevel.objects.push(new BouncyParticle(this.x - 18, this.y, sprDigit1, PARTICLE_DIGIT));
+			objLevel.objects.push(new BouncyParticle(this.x + 18, this.y, sprDigit0, PARTICLE_DIGIT));
+        } else if( this.value == 25 ){
+            objLevel.objects.push(new BouncyParticle(this.x - 18, this.y, sprDigit2, PARTICLE_DIGIT));
+			objLevel.objects.push(new BouncyParticle(this.x + 18, this.y, sprDigit5, PARTICLE_DIGIT));
+		}
+			
         saveData.setGemCollected(objLevel.id, this.id, this.value);
         objSparx.notifyGemKilled(this);
         objCamera.infoPanelGems.show();

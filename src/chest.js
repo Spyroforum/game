@@ -30,10 +30,17 @@ function ChestBasket(){
             picked (boolean) - if the gem should be picked when created
     */
     this.kill = function(picked){
+		this.breakEffect();
         objLevel.addGem(this.x, this.y, 0, -15, this.gemDrop, picked, this.gemId);
         saveData.setChestCollected(objLevel.id, this.id);
         this.alive = false;
     }
+	
+	this.breakEffect = function(){
+		for(var i = 0; i < 5; i++){
+			objLevel.objects.push(new BouncyParticle(this.x - 20 + Math.random() * 40, this.y - 20 + Math.random() * 40, sprBasketParticle, PARTICLE_BASKET));
+		}
+	}
 
     this.draw = function(){
         if(!this.alive) return;
@@ -86,8 +93,8 @@ function ChestVase(){
         if(!this.alive) return;
 
         // set currnt frame depending on vase hotness
-        this.sprite.frame = Math.floor(this.hot / 10);
-        if(this.sprite.frame >= this.sprite.frameCount()) this.sprite.frame = this.sprite.frameCount()-1;
+        this.sprite.goToFrame(Math.floor(this.hot / 10));
+        if(this.sprite.frame >= this.sprite.frameCount()) this.sprite.goToFrame(this.sprite.frameCount()-1);
 
         this.sprite.draw(this.x, this.y);
     }
