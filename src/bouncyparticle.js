@@ -1,6 +1,6 @@
 var PARTICLE_DIGIT = 0;
 var PARTICLE_BASKET = 1;
-var PARTICLE_VASE = 1;
+var PARTICLE_VASE = 2;
 function BouncyParticle(x, y, sprite, type){
     this.x = x;
     this.y = y;
@@ -21,7 +21,7 @@ function BouncyParticle(x, y, sprite, type){
 		this.stepsLeft = 80;
 		this.sprite = new Animation(sprite, ANIMATION_LOOP_R);
 		this.sprite.animSpeed = 0.25;
-	} else if(type == PARTICLE_BASKET){
+	} else if(type == PARTICLE_BASKET || type == PARTICLE_VASE){
 		this.radius = 16;
 		this.xspeed = 5 - Math.random() * 10;
 		this.yspeed = 5 + Math.random() * 5;
@@ -48,7 +48,7 @@ function BouncyParticle(x, y, sprite, type){
 		
 		if( this.type == PARTICLE_DIGIT )
 			this.sprite.nextFrame();
-		else if( this.type == PARTICLE_BASKET )
+		else if( this.type == PARTICLE_BASKET || this.type == PARTICLE_VASE )
 			this.rotation += this.rotationSpeed;
 		
 		this.stepsLeft--;
@@ -90,7 +90,7 @@ function BouncyParticle(x, y, sprite, type){
         if( this.sprite == null ) return;
 		if( this.type == PARTICLE_DIGIT )
 			this.sprite.draw(this.x, this.y);
-		else if( this.type == PARTICLE_BASKET )
+		else if( this.type == PARTICLE_BASKET || this.type == PARTICLE_VASE )
 			drawSprite(context, this.sprite, 0, this.x, this.y, 1, 1, this.rotation);
     }
 }

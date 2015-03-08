@@ -28,6 +28,8 @@ var sprSpyroRun = resources.addSprite("sprSpyroRun.png", 5, 116, 63, 68, 31, 0);
 var sprSpyroGlide = resources.addSprite("sprSpyroGlide.png", 4, 139, 67, 68, 31, 0);
 var sprSpyroHover = resources.addSprite("sprSpyroHover.png", 4, 92, 92, 40, 48, 0);
 var sprSpyroFall = resources.addSprite("sprSpyroFall.png", 10, 132, 65, 68, 30, 0);
+var sprSpyroCharge = resources.addSprite("sprSpyroCharge.png", 6, 131, 52, 63, 16, 0);
+var sprSpyroCrash = resources.addSprite("sprSpyroCrash.png", 7, 90, 82, 40, 50, 0);
 
 var sprEnemy = resources.addSprite("sprEnemy.png", 1, 64, 64, 32, 32, 0);
 var sprSparxYellow = resources.addSprite("sprSparxYellow.png", 4, 32, 32, 16, 16, 0);
@@ -46,6 +48,7 @@ var sprDigit5 = resources.addSprite("sprDigit5.png", 36, 29, 33, 14, 16, 0);
 var sprChestBasket = resources.addSprite("sprChestBasket.png", 1, 64, 64, 32, 32, 0);
 var sprBasketParticle = resources.addSprite("sprBasketParticle.png", 1, 29, 26, 14, 13, 0);
 var sprChestVase = resources.addSprite("sprChestVase.png", 6, 38, 64, 19, 32, 0);
+var sprVaseParticle = resources.addSprite("sprVaseParticle.png", 1, 29, 26, 14, 13, 0);
 var sprChestLife = resources.addSprite("sprChestLife.png", 1, 64, 64, 32, 32, 0);
 
 var sprButterflyHealth = resources.addSprite("sprButterflyHealth.png", 6, 32, 32, 16, 16, 0);
@@ -135,12 +138,19 @@ function initKeyboard(){
 	controlKey = keyboard.addKey(17);
 	returnKey = keyboard.addKey(13);
 	escapeKey = keyboard.addKey(27);
+	wKey = keyboard.addKey(ord("W"));
 	aKey = keyboard.addKey(ord("A"));
 	sKey = keyboard.addKey(ord("S"));
+	dKey = keyboard.addKey(ord("D"));
 	rKey = keyboard.addKey(ord("R"));
 	xKey = keyboard.addKey(ord("X"));
 	yKey = keyboard.addKey(ord("Y"));
 	cKey = keyboard.addKey(ord("C"));
+	
+	// 
+	jumpKey = sKey;
+	chargeKey = aKey;
+	flameKey = dKey;
 }
 
 

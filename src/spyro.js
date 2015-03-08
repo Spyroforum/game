@@ -5,10 +5,11 @@ var SPYRO_FLAME_SPEED = 8;
 var SPYRO_JUMP_SPEED = 19;
 var SPYRO_GLIDE_YSPEED = 6; // Constant falling speed
 var SPYRO_HOVER_YSPEED = 14;
-var SPYRO_RUN_XSPEED = 15; // Max run xspeed
+var SPYRO_RUN_XSPEED = 14; // Max run xspeed
 var SPYRO_GLIDE_XSPEED = 18; // Max glide xspeed
 var SPYRO_HOVER_XSPEED = 5; // Max hover xspeed
 var SPYRO_FALL_XSPEED = 5; // Max fall xspeed
+var SPYRO_CHARGE_XSPEED = 22; // Max charge xspeed
 var SPYRO_SLOPE_ANGLE_LIMIT = 45; // Only lines with a slope angle smaller than 45 degrees will count as a floor to stand on
 var SPYRO_MAX_HEALTH = 4;
 
@@ -33,6 +34,9 @@ function Spyro(){
 	this.jumping = false;
 	this.gliding = false;
 	this.falling = false;
+	this.charging = false;
+	this.crashing = false;
+	this.stepsSinceChargeInAir = 100;
 	this.stateSteps = 0; // Used for counting how long Spyro has been jumping, hovering, falling etc.
 	
 	this.jump = function(){
@@ -40,10 +44,14 @@ function Spyro(){
 		//	   the first option makes spyro jump higher when he runs up steep cliff
 		this.yspeed = -SPYRO_JUMP_SPEED ;
 		audio.playSound(sndJump, 1, false);
-		this.sprite = sprSpyroJump;
+		if( this.charging ){
+			this.frame = 0;
+			this.animSpeed = 0;
+		} else 
+			this.sprite = sprSpyroJump;
+		this.stateSteps = 0;
 		this.frame = 0;
 		this.onGround = false;
-		this.stateSteps = 0;
 		this.jumping = true;
 	}
 	
@@ -51,6 +59,7 @@ function Spyro(){
 		this.jumping = false;
 		this.falling = false;
 		this.gliding = true;
+		this.charging = false;
 		this.yspeed = SPYRO_GLIDE_YSPEED ;
 		this.sprite = sprSpyroGlide;
 		this.frame = 0;
@@ -71,6 +80,8 @@ function Spyro(){
 		this.hovering = false;
 		this.gliding = false;
 		this.falling = true;
+		this.charging = false;
+		this.crashing = false;
 		this.stateSteps = 1;
 		this.sprite = sprSpyroFall;
 		this.frame = 0;
@@ -81,20 +92,61 @@ function Spyro(){
 		this.jumping = false;
 		this.hovering = false;
 		this.gliding = false;
+		this.crashing = false;
 		this.frame = 0;
-		if( Math.abs(this.xspeed) > 3)
-			this.sprite = sprSpyroBreak;
-		else
-			this.sprite = sprSpyroIdle;
+		if( this.charging ){
+			this.animSpeed = 0.5;
+		} else {
+			this.animSpeed = 0.25;
+			if( Math.abs(this.xspeed) > 3)
+				this.sprite = sprSpyroBreak;
+			else
+				this.sprite = sprSpyroIdle;
+		}
+	}
+	
+	this.charge = function(){
+		this.falling = false;
+		if( this.onGround )
+			this.jumping = false;
+		else this.jumping = true;
+		this.hovering = false;
+		this.gliding = false;
+		this.charging = true;
+		this.yspeed = Math.min(this.yspeed, 5);
+		this.frame = 0;
+		this.sprite = sprSpyroCharge;
+		this.animSpeed = 0.5;
+		this.stateSteps = 0;
+	}
+	
+	this.crash = function(){
+		this.falling = false;
+		this.jumping = false;
+		this.hovering = false;
+		this.gliding = false;
+		this.charging = false;
+		this.crashing = true;
+		this.frame = 0;
+		this.yspeed = 0;
+		this.xspeed = -10 * this.facing;
+		this.animSpeed = 0.5;
+		this.sprite = sprSpyroCrash;
+		this.stateSteps = 0;
 	}
 	
 	this.whileJumping = function(){
-		if( this.stateSteps == 30 )
-			this.fall();
-			
-		if( Math.round(this.frame) >= sprSpyroJump.frames - 1 ) // Loop the last few frames
-			this.frame -= 2;
-			
+		if( this.charging ){
+			this.frame = 0;
+			this.animSpeed = 0;
+			this.rotation = objectDirection( {x:0, y:0}, {x:Math.max(Math.abs(this.xspeed),10), y:this.yspeed*this.facing} );
+		} else {
+			if( this.stateSteps == 30 )
+				this.fall();
+				
+			if( Math.round(this.frame) >= sprSpyroJump.frames - 1 ) // Loop the last few frames
+				this.frame -= 2;
+		}				
 		if( this.onGround )
 			this.land();
 	}
@@ -104,7 +156,7 @@ function Spyro(){
 		var nl = levelPartCircle(this.x, this.y, this.radius * 2 + Math.abs(this.xspeed)); 
 		levelPartRemoveCircle(nl, this.x, this.y, this.radius * 0.99);
 		
-		if( circleXlevelPart(this.x + this.facing * (1 + this.radius * 0.2), this.y, this.radius * 0.8, nl) ){
+		if( circleXlevelPart(this.x + this.facing * (2 + this.radius * 0.2), this.y, this.radius * 0.8, nl) ){
 			this.xspeed = 0;
 			this.fall();
 		}
@@ -139,22 +191,48 @@ function Spyro(){
 		}
 	}
 	
+	this.whileCrashing = function(){
+		if( this.frame >= sprSpyroCrash.frames - 1 ){
+			this.animSpeed = 0.5;
+			if( this.onGround ){
+				this.land();
+			} else {
+				this.fall();
+			}
+		}
+	}
+	
+	this.whileCharging = function(){
+		var nl = levelPartCircle(this.x, this.y, this.radius * 2 + Math.abs(this.xspeed)); 
+		levelPartRemoveCircle(nl, this.x, this.y, this.radius * 0.99);
+		
+		if( circleXlevelPart(this.x + this.facing * (2 + this.radius * 0.2), this.y, this.radius * 0.8, nl) ){
+			this.xspeed = 0;
+			this.crash();
+		}
+	}
+	
 	this.whileOnGround = function(){
         var hasFocus = !objLevel.isDialogActive();
-		if( hasFocus && (keyboard.isHeld(leftKey) || keyboard.isHeld(rightKey))){
-			this.sprite = sprSpyroRun;
-		} else {
-			if( this.sprite != sprSpyroBreak && this.sprite != sprSpyroIdle ){
-				if( Math.abs(this.xspeed) > 3){
-					this.sprite = sprSpyroBreak;
-					this.frame = 0;
-				} else if( this.sprite != sprSpyroIdle ){
-					this.sprite = sprSpyroIdle;
-					this.frame = 0;
-				}
+		if( !this.crashing ){
+			if( hasFocus && (keyboard.isHeld(leftKey) || keyboard.isHeld(rightKey) || (this.charging && keyboard.isHeld(chargeKey)))){
+				if( this.charging )
+					this.sprite = sprSpyroCharge;
+				else
+					this.sprite = sprSpyroRun;
 			} else {
-				if( Math.round(this.frame) == sprSpyroBreak.frames - 1 )
-					this.sprite = sprSpyroIdle;
+				if( this.sprite != sprSpyroBreak && this.sprite != sprSpyroIdle ){
+					if( Math.abs(this.xspeed) > 3){
+						this.sprite = sprSpyroBreak;
+						this.frame = 0;
+					} else if( this.sprite != sprSpyroIdle ){
+						this.sprite = sprSpyroIdle;
+						this.frame = 0;
+					}
+				} else {
+					if( Math.round(this.frame) == sprSpyroBreak.frames - 1 )
+						this.sprite = sprSpyroIdle;
+				}
 			}
 		}
 	}
@@ -168,20 +246,38 @@ function Spyro(){
 		if( this.falling ) this.maxXSpeed = SPYRO_FALL_XSPEED;
 		else if( this.hovering ) this.maxXSpeed = SPYRO_HOVER_XSPEED;
 		else if( this.gliding ) this.maxXSpeed = SPYRO_GLIDE_XSPEED;
+		else if( this.charging ) this.maxXSpeed = SPYRO_CHARGE_XSPEED;
 		else this.maxXSpeed = SPYRO_RUN_XSPEED;
-			
-		if(keyboard.isHeld(leftKey) && hasFocus){
-			this.xspeed = speedUpMinus(this.xspeed, this.acceleration, -this.maxXSpeed);
-			this.facing = -1;
-		}
-		if(keyboard.isHeld(rightKey) && hasFocus){
-			this.xspeed = speedUpPlus(this.xspeed, this.acceleration, this.maxXSpeed);
-			this.facing = 1;
+		
+		if( ! this.crashing ){
+			if(keyboard.isHeld(leftKey) && hasFocus){
+				
+				if( this.charging ){
+					this.xspeed = speedUpMinus(this.xspeed, this.acceleration * 3.2, -this.maxXSpeed);
+					if( this.xspeed < 0 )
+						this.facing = -1;
+				} else {
+					this.xspeed = speedUpMinus(this.xspeed, this.acceleration, -this.maxXSpeed);
+					this.facing = -1;
+				}
+			}
+			if(keyboard.isHeld(rightKey) && hasFocus){
+				if( this.charging ){
+					this.xspeed = speedUpPlus(this.xspeed, this.acceleration * 3.2, this.maxXSpeed);
+					if( this.xspeed > 0 )
+						this.facing = 1;
+				} else {
+					this.xspeed = speedUpPlus(this.xspeed, this.acceleration, this.maxXSpeed);
+					this.facing = 1;
+				}
+			}
 		}
 		
 		//Automatic acceleration while gliding
 		if( this.gliding ){
 			this.xspeed += Math.max(-4, Math.min(this.facing * this.maxXSpeed - this.xspeed, 4));
+		} else if( this.charging ){
+			this.xspeed += Math.max(-8, Math.min(this.facing * this.maxXSpeed - this.xspeed, 8));
 		}
 		
 		//Gravity and falling speed
@@ -197,10 +293,14 @@ function Spyro(){
 			this.yspeed = 0;
 		}
 		
-		//Collide with chests, and possibly other objects later
-		chestCollision(this);
-		
-		// Movement and collision with terrain
+			var prev_onGround = this.onGround; // These are used to stop spyro 
+			var prev_yspeed = this.yspeed; // from sliding up steep slopes 
+			var prev_xspeed = this.xspeed; // when he should be falling.
+			
+			//Collide with chests, and possibly other objects later
+			//chestCollision(this);
+			
+			// Movement and collision with terrain
 			var speed = Math.sqrt(this.xspeed * this.xspeed + this.yspeed * this.yspeed);
 			// Extract a list of all lines within a (2 * radius + speed) distance from Spyro, because these are the only ones he could possibly collide with
 			var nearLines = levelPartCircle(this.x, this.y, this.radius * 2 + speed); 
@@ -209,10 +309,13 @@ function Spyro(){
 			var wasOnGround = this.onGround;
 			this.determineIfOnGround(nearLines); //Also makes Spyro align himself with the terrain
 			if( wasOnGround && ! this.onGround )
-				this.fall();
+				if( this.charging ){
+					this.jumping = true;
+				} else
+					this.fall();
 							
 			if( this.onGround ){//Friction when not holding holding left/right keys
-				if(!(keyboard.isHeld(leftKey) && hasFocus) && !(keyboard.isHeld(rightKey) && hasFocus)){
+				if( ( (! keyboard.isHeld(leftKey) &&  ! keyboard.isHeld(rightKey)) || this.crashing) || this.hasFocus){
 					var ret = slowDownXY( this.xspeed, this.yspeed, 1.5 );
 					this.xspeed = ret.xspeed;
 					this.yspeed = ret.yspeed;
@@ -226,36 +329,65 @@ function Spyro(){
 			// (if onGround) Make Spyro not move off the ground by running
 			this.stickToGround();
 			
-			this.frame += this.animSpeed;
-			
-			//Jump related
-			if(keyboard.isPressed(upKey) && hasFocus) {
-				if( this.onGround ){
-					this.jump();
-				} else {
-					if( this.jumping || (this.falling && this.stateSteps > 10) )
-						this.glide();
-					else if( this.gliding )
-						this.hover();
-				}
+			if( !prev_onGround ){
+				this.yspeed = prev_yspeed;
+				this.xspeed = prev_xspeed;
 			}
 			
-			this.stateSteps++;
+		this.frame += this.animSpeed;
+		
+		//Jump related
+		if((keyboard.isPressed(jumpKey) || (this.charging && keyboard.isHeld(jumpKey))) && !this.crashing && hasFocus) {
+			if( this.onGround ){
+				this.jump();
+			} else if( keyboard.isPressed(jumpKey) ){
+				if( this.jumping || (this.falling && (this.stateSteps > 10 || this.stepsSinceChargeInAir < 30)) )
+					this.glide();
+				else if( this.gliding )
+					this.hover();
+			}
+		}
+		
+		// Charge if able to
+		if( (keyboard.isHeld(chargeKey) || (this.charging && ! this.onGround && this.stateSteps < 15)) && !this.crashing && hasFocus ){
+			if( ! this.charging && !(this.stateSteps < 20 && ( this.falling || this.hovering || this.gliding )) && this.stepsSinceChargeInAir > 30 )
+				this.charge();
+		} else {
+			if( this.charging){
+				//this.xspeed /= 2;
+				if( !this.onGround )
+					this.fall();
+			}
+			this.charging = false;
+			this.animSpeed = 0.25;
+		}
+		
+		if( this.onGround )
+			this.stepsSinceChargeInAir = 100;
+		else if( this.charging )
+			this.stepsSinceChargeInAir = 0;
+		
+		this.stateSteps++;
+		this.stepsSinceChargeInAir++;
+		
+		if( this.gliding ) 
+			this.whileGliding();
+		if( this.hovering ) 
+			this.whileHovering();
+		if( this.jumping ) 
+			this.whileJumping();
+		if( this.falling ) 
+			this.whileFalling();
+		if( this.crashing ) 
+			this.whileCrashing();
+		if( this.charging )
+			this.whileCharging();
 			
-			if( this.gliding ) 
-				this.whileGliding();
-			if( this.hovering ) 
-				this.whileHovering();
-			if( this.jumping ) 
-				this.whileJumping();
-			if( this.falling ) 
-				this.whileFalling();
-				
-			if( this.onGround && ! this.falling )
-				this.whileOnGround();
+		if( this.onGround && ! this.falling )
+			this.whileOnGround();
 
         // update flame
-        if( this.flame > 0 || (keyboard.isPressed(aKey) && hasFocus) ){
+        if( this.flame > 0 || ((keyboard.isPressed(flameKey) && !this.charging) && hasFocus) ){
             if( this.flame < SPYRO_FLAME_WIDTH ){
                 this.flame += SPYRO_FLAME_SPEED;
             } else this.flame = 0;
@@ -264,17 +396,33 @@ function Spyro(){
 
 
 	this.flameX = function(){
-		return this.x + this.facing * ( this.radius + this.flame );
+		var cos = Math.cos(-this.rotation / 180 * Math.PI);
+		
+		var offsetx = this.facing * ( this.radius + this.flame );
+		
+		return this.x + offsetx * cos;
 	}
 
 
 	this.flameY0 = function(){
-		return this.y - SPYRO_FLAME_HEIGHT / 2;
+		var cos = Math.cos(-this.rotation / 180 * Math.PI);
+		var sin = Math.sin(-this.rotation / 180 * Math.PI);
+		
+		var offsetx = this.facing * ( this.radius + this.flame );
+		var offsety = -SPYRO_FLAME_HEIGHT / 2;
+		
+		return this.y + offsety * cos + offsetx * sin;
 	}
 
 
 	this.flameY1 = function(){
-		return this.y + SPYRO_FLAME_HEIGHT / 2;
+		var cos = Math.cos(-this.rotation / 180 * Math.PI);
+		var sin = Math.sin(-this.rotation / 180 * Math.PI);
+		
+		var offsetx = this.facing * ( this.radius + this.flame );
+		var offsety = SPYRO_FLAME_HEIGHT / 2;
+		
+		return this.y + offsety * cos + offsetx * sin;
 	}
 	
 	this.determineIfOnGround = function(nearLines){

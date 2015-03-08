@@ -41,7 +41,7 @@ function Sparx(){
 		var gem, i;
 		for(i = 0; i < objLevel.Gem.length; i++){
 			gem = objLevel.Gem[i];
-			if(!gem.alive || gem.picked) continue;
+			if(!gem.alive || gem.picked || gem.unPickAble > 0) continue;
 			if(objectCollideDistance(gem, objSpyro, SPARX_SIGHT)){
 				this.gem = gem;
 				return true;

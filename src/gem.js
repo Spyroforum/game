@@ -9,6 +9,7 @@ function Gem(){
     this.xspeed = 0;
     this.yspeed = 0;
     this.picked = false;
+	this.unPickAble = 5;
     this.sprite = null;
     this.value = 1;    // number to be added to gem count when picked
     this.alive = true; // tells if the gem should be removed from the array
@@ -75,10 +76,13 @@ function Gem(){
         }
 		
 		this.sprite.nextFrame();
-        // If Spyro picks this gem
-        if( objectCollide( this, objSpyro ) ){
-            this.kill();
-        }
+        
+		if( this.unPickAble > 0 )
+			this.unPickAble--;
+		else// If Spyro picks this gem
+			if( objectCollide( this, objSpyro ) ){
+				this.kill();
+			}
     }
 
 

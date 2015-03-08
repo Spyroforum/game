@@ -258,7 +258,7 @@ function objectXlevelPartCollision( object, levelPart )
 		//Squared radius to test against squared distance, to determine overlapping, reduced a little bit
 		//to be forgiving in situations where object hasn't been completely moved out of tight cracks.
 		var sqrRadius = object.radius * object.radius;
-		var sqrRadiusSmaller = sqrRadius * 0.9;
+		var sqrRadiusSmaller = sqrRadius * 0.95;
 		
 		//And it's list of points
 		var l = levelPart.length;
@@ -525,14 +525,14 @@ function isFlamed(object){
 */
 function isCharged(object){
     // exit if no spyro or flame
-    /*if(objSpyro == null) return false;
-    if(objSpyro.???) return false; // TODO
-    if(collision ???){ // TODO
+    if(objSpyro == null) return false;
+    if( !objSpyro.charging) return false;
+    if(objectCollideDistance( objSpyro, object, 2 )){
         return true;
     } else {
         return false;
-    }*/
-    return false; // DELETE ME
+    }
+    return false;
 }
 
 /*

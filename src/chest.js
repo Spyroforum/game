@@ -84,10 +84,17 @@ function ChestVase(){
     }
 
     this.kill = function(picked){
+		this.breakEffect();
         objLevel.addGem(this.x, this.y, 0, -15, this.gemDrop, picked, this.gemId);
         saveData.setChestCollected(objLevel.id, this.id);
         this.alive = false;
     }
+	
+	this.breakEffect = function(){
+		for(var i = 0; i < 5; i++){
+			objLevel.objects.push(new BouncyParticle(this.x - 20 + Math.random() * 40, this.y - 20 + Math.random() * 40, sprVaseParticle, PARTICLE_VASE));
+		}
+	}
 
     this.draw = function(){
         if(!this.alive) return;

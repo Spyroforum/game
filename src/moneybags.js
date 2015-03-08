@@ -23,7 +23,7 @@ function Moneybags(){
 
     this.step = function(){
         this.tooltip = objectDistance(this, objSpyro) < MONEYBAGS_SPEAK_DISTANCE && !objLevel.isDialogVisible();
-        if(this.tooltip && keyboard.isPressed(aKey)){
+        if(this.tooltip && keyboard.isPressed(wKey)){
             objLevel.showDialog(this.dialog);
         }
     }
@@ -33,7 +33,7 @@ function Moneybags(){
 
         if(this.tooltip){
             context.fillStyle = "rgb(255,255,255)";
-            drawText(context, "Press (a) to talk.", this.x, this.y - 72, "bold 15px Arial", "center");
+            drawText(context, "Press (w) to talk.", this.x, this.y - 72, "bold 15px Arial", "center");
         }
     }
 }
