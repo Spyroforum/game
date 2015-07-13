@@ -13,6 +13,12 @@ var SPEECH_BOX_MESSAGE_SPEED = 1;
 var SPEECH_BOX_CONTENT_HEIGHT = SPEECH_BOX_HEIGHT - 2*SPEECH_BOX_PADDING - SPEECH_BOX_FONT_SIZE;
 var SPEECH_BOX_VISIBLE_ROW_COUNT = Math.floor(SPEECH_BOX_CONTENT_HEIGHT / SPEECH_BOX_FONT_SIZE);
 
+var SPEECH_BOX_OPTION_SELECTED_COLOR = "rgb(255,255,255)";
+var SPEECH_BOX_OPTION_NOT_SELECTED_COLOR = "rgb(127,127,127)";
+var SPEECH_BOX_BORDER_COLOR = "rgb(0,0,0)";
+var SPEECH_BOX_AREA_COLOR = "rgba(0,0,0,0.75)";
+var SPEECH_BOX_TEXT_COLOR = "rgb(255,255,255)";
+
 function SpeechBox(){
     this.dialog = null;
     this.x = -screenWidth;
@@ -50,8 +56,8 @@ function SpeechBox(){
     this.close = function(){
         this.step = this.stepHide;
 
-        if(this.dialog != null)
-            if(this.dialog.closeAction != null)
+        if(this.dialog !== null)
+            if(this.dialog.closeAction !== null)
                 this.dialog.closeAction.apply();
     }
 
@@ -244,12 +250,12 @@ function SpeechBox(){
         objCamera.setStaticView();
 
         // draw borders
-        context.fillStyle = "rgb(0,0,0)";
+        context.fillStyle = SPEECH_BOX_BORDER_COLOR;
         context.fillRect(0, 0, screenWidth, this.border);
         context.fillRect(0, screenHeight - this.border, screenWidth, this.border);
 
         // draw text area
-        context.fillStyle = "rgba(0,0,0,0.75)";
+        context.fillStyle = SPEECH_BOX_AREA_COLOR;
         var y = screenHeight - SPEECH_BOX_HEIGHT - SPEECH_BOX_MARGIN - SPEECH_BOX_BORDER;
         var x = this.x + SPEECH_BOX_MARGIN;
         drawRectangleRounded(context, x, y, screenWidth - 2*SPEECH_BOX_MARGIN, SPEECH_BOX_HEIGHT,
@@ -260,7 +266,7 @@ function SpeechBox(){
         // draw title
         x += SPEECH_BOX_PADDING;
         y += SPEECH_BOX_FONT_SIZE + SPEECH_BOX_PADDING;
-        context.fillStyle = "rgb(255,255,255)";
+        context.fillStyle = SPEECH_BOX_TEXT_COLOR;
         this.drawText(this.currentPage.title, x, y);
 
         context.save();
@@ -289,9 +295,9 @@ function SpeechBox(){
             for(var i = 0; i < this.currentPage.options.length; i++){
 			    y += SPEECH_BOX_FONT_SIZE;
                 if(i == this.currentOptionId)
-                    context.fillStyle = "rgb(255,255,255)";
+                    context.fillStyle = SPEECH_BOX_OPTION_SELECTED_COLOR;
                 else
-                    context.fillStyle = "rgb(127,127,127)";
+                    context.fillStyle = SPEECH_BOX_OPTION_NOT_SELECTED_COLOR;
                 this.drawText("* " + this.currentPage.options[i].label, x, y);
             }
         }

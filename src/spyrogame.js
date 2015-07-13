@@ -10,6 +10,8 @@ var saveData = new SaveData();
 var leftKey, upKey, rightKey, downKey, aKey, sKey, rKey, xKey, yKey, cKey,
 		spaceKey, shiftKey, controlKey, returnKey, escapeKey;
 
+var jumpKey, chargeKey, flameKey, moveLeftKey, moveRightKey, talkKey;
+
 //Objects
 var objTimer = null;
 var mainMenu = null;
@@ -147,10 +149,12 @@ function initKeyboard(){
 	yKey = keyboard.addKey(ord("Y"));
 	cKey = keyboard.addKey(ord("C"));
 	
-	// 
 	jumpKey = sKey;
 	chargeKey = aKey;
 	flameKey = dKey;
+    moveLeftKey = leftKey;
+    moveRightKey = rightKey;
+    talkKey = wKey;
 }
 
 

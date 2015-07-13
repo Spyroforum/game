@@ -215,7 +215,7 @@ function Spyro(){
 	this.whileOnGround = function(){
         var hasFocus = !objLevel.isDialogActive();
 		if( !this.crashing ){
-			if( hasFocus && (keyboard.isHeld(leftKey) || keyboard.isHeld(rightKey) || (this.charging && keyboard.isHeld(chargeKey)))){
+			if( hasFocus && (keyboard.isHeld(moveLeftKey) || keyboard.isHeld(moveRightKey) || (this.charging && keyboard.isHeld(chargeKey)))){
 				if( this.charging )
 					this.sprite = sprSpyroCharge;
 				else
@@ -250,7 +250,7 @@ function Spyro(){
 		else this.maxXSpeed = SPYRO_RUN_XSPEED;
 		
 		if( ! this.crashing ){
-			if(keyboard.isHeld(leftKey) && hasFocus){
+			if(keyboard.isHeld(moveLeftKey) && hasFocus){
 				
 				if( this.charging ){
 					this.xspeed = speedUpMinus(this.xspeed, this.acceleration * 3.2, -this.maxXSpeed);
@@ -261,7 +261,7 @@ function Spyro(){
 					this.facing = -1;
 				}
 			}
-			if(keyboard.isHeld(rightKey) && hasFocus){
+			if(keyboard.isHeld(moveRightKey) && hasFocus){
 				if( this.charging ){
 					this.xspeed = speedUpPlus(this.xspeed, this.acceleration * 3.2, this.maxXSpeed);
 					if( this.xspeed > 0 )
@@ -315,7 +315,7 @@ function Spyro(){
 					this.fall();
 							
 			if( this.onGround ){//Friction when not holding holding left/right keys
-				if( ( (! keyboard.isHeld(leftKey) &&  ! keyboard.isHeld(rightKey)) || this.crashing) || this.hasFocus){
+				if( ( (! keyboard.isHeld(moveLeftKey) &&  ! keyboard.isHeld(moveRightKey)) || this.crashing) || this.hasFocus){
 					var ret = slowDownXY( this.xspeed, this.yspeed, 1.5 );
 					this.xspeed = ret.xspeed;
 					this.yspeed = ret.yspeed;
