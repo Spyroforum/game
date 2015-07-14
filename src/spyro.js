@@ -215,7 +215,7 @@ function Spyro(){
 	this.whileOnGround = function(){
         var hasFocus = !objLevel.isDialogActive();
 		if( !this.crashing ){
-			if( hasFocus && (keyboard.isHeld(moveLeftKey) || keyboard.isHeld(moveRightKey) || (this.charging && keyboard.isHeld(chargeKey)))){
+			if( hasFocus && (controls.isDown(MOVE_LEFT_BUTTON) || controls.isDown(MOVE_RIGHT_BUTTON) || (this.charging && controls.isDown(CHARGE_BUTTON)))){
 				if( this.charging )
 					this.sprite = sprSpyroCharge;
 				else
@@ -250,7 +250,7 @@ function Spyro(){
 		else this.maxXSpeed = SPYRO_RUN_XSPEED;
 		
 		if( ! this.crashing ){
-			if(keyboard.isHeld(moveLeftKey) && hasFocus){
+			if(controls.isDown(MOVE_LEFT_BUTTON) && hasFocus){
 				
 				if( this.charging ){
 					this.xspeed = speedUpMinus(this.xspeed, this.acceleration * 3.2, -this.maxXSpeed);
@@ -261,7 +261,7 @@ function Spyro(){
 					this.facing = -1;
 				}
 			}
-			if(keyboard.isHeld(moveRightKey) && hasFocus){
+			if(controls.isDown(MOVE_RIGHT_BUTTON) && hasFocus){
 				if( this.charging ){
 					this.xspeed = speedUpPlus(this.xspeed, this.acceleration * 3.2, this.maxXSpeed);
 					if( this.xspeed > 0 )
@@ -315,7 +315,7 @@ function Spyro(){
 					this.fall();
 							
 			if( this.onGround ){//Friction when not holding holding left/right keys
-				if( ( (! keyboard.isHeld(moveLeftKey) &&  ! keyboard.isHeld(moveRightKey)) || this.crashing) || this.hasFocus){
+				if( ( (! controls.isDown(MOVE_LEFT_BUTTON) &&  ! controls.isDown(MOVE_RIGHT_BUTTON)) || this.crashing) || this.hasFocus){
 					var ret = slowDownXY( this.xspeed, this.yspeed, 1.5 );
 					this.xspeed = ret.xspeed;
 					this.yspeed = ret.yspeed;
@@ -337,10 +337,10 @@ function Spyro(){
 		this.frame += this.animSpeed;
 		
 		//Jump related
-		if((keyboard.isPressed(jumpKey) || (this.charging && keyboard.isHeld(jumpKey))) && !this.crashing && hasFocus) {
+		if((controls.isPressed(JUMP_BUTTON) || (this.charging && controls.isDown(JUMP_BUTTON))) && !this.crashing && hasFocus) {
 			if( this.onGround ){
 				this.jump();
-			} else if( keyboard.isPressed(jumpKey) ){
+			} else if( controls.isPressed(JUMP_BUTTON) ){
 				if( this.jumping || (this.falling && (this.stateSteps > 10 || this.stepsSinceChargeInAir < 30)) )
 					this.glide();
 				else if( this.gliding )
@@ -349,7 +349,7 @@ function Spyro(){
 		}
 		
 		// Charge if able to
-		if( (keyboard.isHeld(chargeKey) || (this.charging && ! this.onGround && this.stateSteps < 15)) && !this.crashing && hasFocus ){
+		if( (controls.isDown(CHARGE_BUTTON) || (this.charging && ! this.onGround && this.stateSteps < 15)) && !this.crashing && hasFocus ){
 			if( ! this.charging && !(this.stateSteps < 20 && ( this.falling || this.hovering || this.gliding )) && this.stepsSinceChargeInAir > 30 )
 				this.charge();
 		} else {
@@ -387,7 +387,7 @@ function Spyro(){
 			this.whileOnGround();
 
         // update flame
-        if( this.flame > 0 || ((keyboard.isPressed(flameKey) && !this.charging) && hasFocus) ){
+        if( this.flame > 0 || ((controls.isPressed(FLAME_BUTTON) && !this.charging) && hasFocus) ){
             if( this.flame < SPYRO_FLAME_WIDTH ){
                 this.flame += SPYRO_FLAME_SPEED;
             } else this.flame = 0;

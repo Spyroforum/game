@@ -5,12 +5,14 @@ var context = canvas.getContext("2d");
 var gameLoop, screenWidth, screenHeight;
 var redraw = 0;
 var saveData = new SaveData();
+var keyboard = new Keyboard();
+var gamepad = new Gamepad();
+var controls = new Controls();
+
 
 //Keyboard keys
 var leftKey, upKey, rightKey, downKey, aKey, sKey, rKey, xKey, yKey, cKey,
 		spaceKey, shiftKey, controlKey, returnKey, escapeKey;
-
-var jumpKey, chargeKey, flameKey, moveLeftKey, moveRightKey, talkKey;
 
 //Objects
 var objTimer = null;
@@ -108,6 +110,7 @@ function debug(message){
     elementSetText("debug", message);
 }
 
+
 //Below here are the game functions:
 function gameInit(){
 	//Set the game screen size
@@ -148,13 +151,6 @@ function initKeyboard(){
 	xKey = keyboard.addKey(ord("X"));
 	yKey = keyboard.addKey(ord("Y"));
 	cKey = keyboard.addKey(ord("C"));
-	
-	jumpKey = sKey;
-	chargeKey = aKey;
-	flameKey = dKey;
-    moveLeftKey = leftKey;
-    moveRightKey = rightKey;
-    talkKey = wKey;
 }
 
 
@@ -194,6 +190,8 @@ function repaint(){
 
 
 function gameStep(){
+    gamepad.stepBeginEvent();
+
 	if( resources.loaded ){
         if(objLevel != null){
             objLevel.step();
@@ -211,6 +209,7 @@ function gameStep(){
     // Make keys go to the state of just being held or untouched after being pressed or released
 	keyboard.update();
 	mouse.update();
+    controls.stepEndEvent();
 
 	if( redraw ) gameDraw();
 }

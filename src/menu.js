@@ -114,6 +114,7 @@ function MainMenu(){
     page.addItem2(new MenuKeyChangeItem("Move right", swh, 64+32*5));
     page.addItem2(new MenuItem("Done", swh, 64+32*7, function(){ mainMenu.currentPage = mainMenu.pages[0]; }));
     this.pages.push(page);*/
+    // add reset to defaults button
 }
 
 

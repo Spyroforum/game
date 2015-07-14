@@ -7,7 +7,6 @@ function LinkedListItem(data){
 
 
 function LinkedList(){
-
     this._first = null;
     this._last = null;
     this._current = null;

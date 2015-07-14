@@ -178,8 +178,6 @@ function PolygonLevel(id){
 				}
 			}
 		}
-
-        elementSetText("saveData", saveData.toString(objLevel.id)); // for debug only
 	}
 
 	

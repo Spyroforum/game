@@ -132,7 +132,7 @@ function SpeechBox(){
     this.stepRead = function(){
         var mlength = this.currentPage.message.length;
         this.cursor += SPEECH_BOX_MESSAGE_SPEED; // show next characters
-        if(this.cursor >= mlength || keyboard.isPressed(aKey)){ // if we reached the end or player don't want to wait
+        if(this.cursor >= mlength || controls.isPressed(JUMP_BUTTON)){ // if we reached the end or player don't want to wait
             this.cursor = mlength;
             this.step = this.stepWait;
         }
@@ -142,7 +142,7 @@ function SpeechBox(){
 
 
     this.stepWait = function(){
-        if(keyboard.isPressed(aKey)){
+        if(controls.isPressed(JUMP_BUTTON)){
             if(!this.hasOptions()){
                 this.nextPage();
             } else {
@@ -154,10 +154,10 @@ function SpeechBox(){
                 else
                     this.nextPage();
             }
-        } else if(keyboard.isPressed(upKey)){
+        } else if(controls.isPressed(MOVE_UP_BUTTON)){
             this.optionUp();
             this.scrollUp();
-        } else if(keyboard.isPressed(downKey)){
+        } else if(controls.isPressed(MOVE_DOWN_BUTTON)){
             this.optionDown();
             this.scrollDown();
         }

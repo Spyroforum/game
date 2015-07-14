@@ -23,7 +23,7 @@ function Moneybags(){
 
     this.step = function(){
         this.tooltip = objectDistance(this, objSpyro) < MONEYBAGS_SPEAK_DISTANCE && !objLevel.isDialogVisible();
-        if(this.tooltip && keyboard.isPressed(talkKey)){
+        if(this.tooltip && controls.isPressed(TALK_BUTTON)){
             objLevel.showDialog(this.dialog);
         }
     }
